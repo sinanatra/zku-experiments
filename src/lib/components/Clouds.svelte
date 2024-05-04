@@ -24,8 +24,8 @@
         s.draw = () => {
             // s.frameRate(1 / 60);
 
-            const rrain_piezo = s.map(data.rrain_piezo, 0, 10, 1, 0.6);
-            const light = s.map(data.solarradiation, 0, 1000, 0, 1);
+            const rrain_piezo = s.map(data.rrain_piezo, 0, 10, 1, 0.5);
+            const light = s.map(data.solarradiation, 0, 1000, 0.1, 1);
             const wind = s.map(data.windspeed, 0, 30, 0, 2);
 
             const temp = s.map(data.temp, -10, 40, 1, 0);
@@ -36,13 +36,13 @@
 
             test = cloudDensity;
 
-            let tempHue = 198;
+            let tempHue = 200;
             let timeOfDay = new Date(data.time).getHours();
             let hueAdjustment = s.map(timeOfDay, 0, 23, -10, 10);
             let adjustedHue = (tempHue + hueAdjustment) / 360;
 
             myShader.setUniform("u_cloud_density", cloudDensity);
-            myShader.setUniform("u_seed", timeOfDay);
+            myShader.setUniform("u_seed", timeOfDay );
             myShader.setUniform("u_time", (frameCount / 60) * wind);
             myShader.setUniform("u_resolution", [width, height]);
             myShader.setUniform("u_skyHue", adjustedHue);

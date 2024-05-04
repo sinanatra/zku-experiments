@@ -1,5 +1,4 @@
 <script>
-    import { page } from "$app/stores";
     import { onMount } from "svelte";
     import Clouds from "@components/Clouds.svelte";
 
@@ -7,7 +6,7 @@
     let keys = [];
     let idx = 60;
     onMount(async (d) => {
-        const response = await fetch("weather.json");
+        const response = await fetch("2d.json");
         data = await response.json();
         keys = Object.keys(data[0]);
     });
@@ -29,7 +28,7 @@
         />
     </label>
     <article>
-        {#each datum.slice(0, 16) as d}
+        {#each datum.slice(0, 16) as d, i}
             <section>
                 <Clouds data={d} {keys} />
             </section>
@@ -49,7 +48,8 @@
     }
 
     section {
-        width: 12.5%;
-        height: 450px;
+        width: 100%;
+        /* width: 12.5%; */
+        height: 650px;
     }
 </style>

@@ -48,20 +48,20 @@
             }
 
             // CLIP
-            // s.fill(80);
-            // s.beginShape();
-            // s.vertex(0, 0);
-            // s.vertex(width, 0);
-            // s.vertex(width, height);
-            // s.vertex(0, height);
-            // s.beginContour();
-            // for (let i = 360; i > 0; i--) {
-            //     let x = (s.cos(s.radians(i)) * width) / 2;
-            //     let y = (s.sin(s.radians(i)) * height) / 2;
-            //     s.vertex(width / 2 + x, height / 2 + y);
-            // }
-            // s.endContour();
-            // s.endShape();
+            s.fill(80);
+            s.beginShape();
+            s.vertex(0, 0);
+            s.vertex(width, 0);
+            s.vertex(width, height);
+            s.vertex(0, height);
+            s.beginContour();
+            for (let i = 360; i > 0; i--) {
+                let x = (s.cos(s.radians(i)) * width) / 2;
+                let y = (s.sin(s.radians(i)) * height) / 2;
+                s.vertex(width / 2 + x, height / 2 + y);
+            }
+            s.endContour();
+            s.endShape();
 
             s.fill(0);
             s.textSize(18);
