@@ -4,7 +4,7 @@
         <a href="/cloud">Cloud</a> 
         ---
         <a href="/perlin">Perlin</a> -
-        <a href="/perlinclouds">Perlin Clouds</a> -
+        <a href="/clouds2">Clouds</a> -
     </span>
 </header>
 
