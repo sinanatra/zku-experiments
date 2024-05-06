@@ -12,26 +12,8 @@
     let windSpeed = 0;
     let windDirection = 0;
 
-    let cloudTextures = [];
-    const texturePaths = [
-        "cloud1.png",
-        "cloud2.png",
-        "cloud3.png",
-        "cloud4.png",
-        "cloud5.png",
-        // "cloud6.png",
-    ];
-
-    function loadTextures() {
-        const loader = new THREE.TextureLoader();
-        texturePaths.forEach((path) => {
-            cloudTextures.push(loader.load(path));
-        });
-    }
-
     onMount(async () => {
         initThreeJS();
-        loadTextures();
         animate();
         const response = await fetch("2d.json");
         data = await response.json();
@@ -58,12 +40,13 @@
 
         const radians = THREE.MathUtils.degToRad(windDirection);
         const xSpeed = Math.sin(radians) * windSpeed;
-        const ySpeed = -Math.cos(radians) * windSpeed;
+        const ySpeed = -Math.cos(radians) * windSpeed; // Negative because y-coordinates increase downwards in screen space
 
         cloudMeshes.forEach((mesh) => {
             mesh.position.x += xSpeed;
             mesh.position.y += ySpeed;
 
+            // Reset position when moving out of view for looping effect
             if (mesh.position.x > 1000) mesh.position.x = -1000;
             if (mesh.position.x < -1000) mesh.position.x = 1000;
             if (mesh.position.y > 500) mesh.position.y = -500;
@@ -76,27 +59,26 @@
     function updateEnvironment(datum) {
         const tempHue = 200;
         const timeOfDay = new Date(datum.time).getHours();
+
         const hueAdjustment = mapValue(timeOfDay, 0, 23, -10, 10);
         const adjustedHue = tempHue + hueAdjustment;
 
+        const rain = mapValue(datum.humidity, 0, 100, 100, 0);
         const light = mapValue(datum.solarradiation, 0, 1000, 20, 100);
+
         scene.background = new THREE.Color(
             `hsl(${adjustedHue}, 50%, ${light}%)`,
         );
 
-        const rain = mapValue(datum.humidity, 50, 100, 50, 0);
-        let cloudColorBrightness = Math.max(0, light * 0.5 + rain * 0.5);
-        let cloudColor = new THREE.Color(
-            `hsl(0, 0%, ${cloudColorBrightness}%)`,
-        );
+        let cloudColor = new THREE.Color(`hsl(0, 0%, ${100 - rain}%)`);
 
         const dewpoint = mapValue(datum.dewpoint, 0, 30, 0, 20);
-        const humidity = mapValue(datum.humidity, 50, 100, 0, 50);
-        let cloudDensity = humidity;
-        windSpeed = mapValue(datum.windspeed, 0, 50, 0, 1);
+        const humidity = mapValue(datum.humidity, 50, 100, 0, 20);
+        let cloudDensity = humidity; // Math.abs(humidity + dewpoint);
+        windSpeed = mapValue(datum.windspeed, 0, 30, 0, 2);
         windDirection = datum.winddir;
 
-        let cloudOpacity = mapValue(light, 0, 100, 0.3, 1);
+        let cloudOpacity = mapValue(light, 0, 100, 0.1, 1);
 
         updateClouds(cloudDensity, cloudColor, cloudOpacity);
         time = datum.time + " | " + cloudDensity + " | " + rain;
@@ -106,15 +88,16 @@
         cloudMeshes.forEach((mesh) => scene.remove(mesh));
         cloudMeshes = [];
 
-        const texture =
-            cloudTextures[Math.floor(Math.random() * cloudTextures.length)];
+        const texture = new THREE.TextureLoader().load("cloud3.png");
+        const fog = new THREE.Fog(scene.background, 50, 1500);
+
         const material = new THREE.ShaderMaterial({
             uniforms: {
                 map: { value: texture },
-                cloudColor: { value: cloudColor },
+                fogColor: { value: cloudColor },
                 cloudOpacity: { value: cloudOpacity },
-                fogNear: { value: 50 },
-                fogFar: { value: 1500 },
+                fogNear: { value: fog.near },
+                fogFar: { value: fog.far },
             },
             vertexShader,
             fragmentShader,
@@ -122,18 +105,15 @@
             depthWrite: false,
             side: THREE.DoubleSide,
         });
+
         for (let i = 0; i < cloudCover; i++) {
             let plane = new THREE.Mesh(
                 new THREE.PlaneGeometry(cloudCover * 40, cloudCover * 40),
                 material,
             );
-            plane.position.set(
-                Math.random() * 1000 - 500,
-                Math.random() * 500 - 250,
-                Math.random() * 900 - 100,
-            );
-
-            plane.rotation.z = Math.random() * 1000 - 750 * Math.PI;
+            plane.rotation.x = Math.random() * Math.PI;
+            plane.rotation.y = Math.random() * Math.PI; 
+            // plane.rotation.z = Math.random() * Math.PI;
             scene.add(plane);
             cloudMeshes.push(plane);
         }

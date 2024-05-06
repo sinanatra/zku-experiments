@@ -3,7 +3,8 @@
         <a href="/">Clouds</a> -
         <a href="/cloud">Cloud</a>
         ⎯
-        <a href="/3d">3D</a>
+        <a href="/3d">3D</a> - 
+        <a href="/abstract">Abstract</a>
          ⎯
         <a href="/perlin">Perlin</a> -
         <a href="/clouds2">Clouds</a> -
