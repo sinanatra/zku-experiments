@@ -1,11 +1,11 @@
 <header>
     <span>
+        <a href="/3d">3D Single</a> -
+        <a href="/range">3D Range</a>
+        ⎯
         <a href="/">Clouds</a> -
         <a href="/cloud">Cloud</a>
         ⎯
-        <a href="/3d">3D</a> - 
-        <a href="/abstract">Abstract</a>
-         ⎯
         <a href="/perlin">Perlin</a> -
         <a href="/clouds2">Clouds</a> -
     </span>

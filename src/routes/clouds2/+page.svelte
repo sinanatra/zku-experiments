@@ -8,9 +8,9 @@
     let keys = [];
     let idx = 0;
 
-    const columns = 8;
+    const columns = 4;
     // const rows = Math.ceil(data.length / columns);
-    const rows = 8;
+    const rows = 4;
 
     let size = Math.ceil(columns / 2.5);
 

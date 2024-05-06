@@ -1,185 +1,110 @@
 <script>
+    import Clouds3d from "@components/Clouds3d.svelte";
     import { onMount } from "svelte";
-    import * as THREE from "three";
-
-    let scene,
-        camera,
-        renderer,
-        cloudMeshes = [];
-    let data = [];
     let idx = 0;
-    let time = "";
-    let windSpeed = 0;
-    let windDirection = 0;
+    let every = 10;
 
-    let cloudTextures = [];
-    const texturePaths = [
-        "cloud1.png",
-        "cloud2.png",
-        "cloud3.png",
-        "cloud4.png",
-        "cloud5.png",
-        // "cloud6.png",
-    ];
-
-    function loadTextures() {
-        const loader = new THREE.TextureLoader();
-        texturePaths.forEach((path) => {
-            cloudTextures.push(loader.load(path));
-        });
-    }
-
+    let data = [];
+    let images = [];
+    let metadata = "";
     onMount(async () => {
-        initThreeJS();
-        loadTextures();
-        animate();
-        const response = await fetch("2d.json");
+        const response = await fetch("weather.json");
         data = await response.json();
-        data = data.reverse();
-        updateEnvironment(data[idx]);
+        data.reverse();
+
+        updateIndex();
     });
 
-    function initThreeJS() {
-        scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            1000,
-        );
-        renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-        camera.position.z = 5;
-    }
+    let render = false;
+    function updateIndex() {
+        if (idx < data.length - 1) {
+            idx += every;
+            if (render) {
+                requestAnimationFrame(captureImage);
+            }
 
-    function animate() {
-        requestAnimationFrame(animate);
-
-        const radians = THREE.MathUtils.degToRad(windDirection);
-        const xSpeed = Math.sin(radians) * windSpeed;
-        const ySpeed = -Math.cos(radians) * windSpeed;
-
-        cloudMeshes.forEach((mesh) => {
-            mesh.position.x += xSpeed;
-            mesh.position.y += ySpeed;
-
-            if (mesh.position.x > 1000) mesh.position.x = -1000;
-            if (mesh.position.x < -1000) mesh.position.x = 1000;
-            if (mesh.position.y > 500) mesh.position.y = -500;
-            if (mesh.position.y < -500) mesh.position.y = 500;
-        });
-
-        renderer.render(scene, camera);
-    }
-
-    function updateEnvironment(datum) {
-        const tempHue = 200;
-        const timeOfDay = new Date(datum.time).getHours();
-        const hueAdjustment = mapValue(timeOfDay, 0, 23, -10, 10);
-        const adjustedHue = tempHue + hueAdjustment;
-
-        const light = mapValue(datum.solarradiation, 0, 1000, 20, 100);
-        scene.background = new THREE.Color(
-            `hsl(${adjustedHue}, 50%, ${light}%)`,
-        );
-
-        const rain = mapValue(datum.humidity, 50, 100, 50, 0);
-        let cloudColorBrightness = Math.max(0, light * 0.5 + rain * 0.5);
-        let cloudColor = new THREE.Color(
-            `hsl(0, 0%, ${cloudColorBrightness}%)`,
-        );
-
-        const dewpoint = mapValue(datum.dewpoint, 0, 30, 0, 20);
-        const humidity = mapValue(datum.humidity, 50, 100, 0, 50);
-        let cloudDensity = humidity;
-        windSpeed = mapValue(datum.windspeed, 0, 50, 0, 1);
-        windDirection = datum.winddir;
-
-        let cloudOpacity = mapValue(light, 0, 100, 0.3, 1);
-
-        updateClouds(cloudDensity, cloudColor, cloudOpacity);
-        time = datum.time + " | " + cloudDensity + " | " + rain;
-    }
-
-    function updateClouds(cloudCover, cloudColor, cloudOpacity) {
-        cloudMeshes.forEach((mesh) => scene.remove(mesh));
-        cloudMeshes = [];
-
-        const texture =
-            cloudTextures[Math.floor(Math.random() * cloudTextures.length)];
-        const material = new THREE.ShaderMaterial({
-            uniforms: {
-                map: { value: texture },
-                cloudColor: { value: cloudColor },
-                cloudOpacity: { value: cloudOpacity },
-                fogNear: { value: 50 },
-                fogFar: { value: 1500 },
-            },
-            vertexShader,
-            fragmentShader,
-            transparent: true,
-            depthWrite: false,
-            side: THREE.DoubleSide,
-        });
-        for (let i = 0; i < cloudCover; i++) {
-            let plane = new THREE.Mesh(
-                new THREE.PlaneGeometry(cloudCover * 40, cloudCover * 40),
-                material,
-            );
-            plane.position.set(
-                Math.random() * 1000 - 500,
-                Math.random() * 500 - 250,
-                Math.random() * 900 - 100,
-            );
-
-            plane.rotation.z = Math.random() * 1000 - 750 * Math.PI;
-            scene.add(plane);
-            cloudMeshes.push(plane);
+            metadata = `${new Date(data[idx].time).toLocaleString()} - `;
+            metadata += `Solar Radiation: ${data[idx].solarradiation} - `;
+            metadata += `humidity: ${data[idx].humidity} - `;
+            metadata += `dewpoint: ${data[idx].dewpoint} - `;
+            metadata += `windspeed: ${data[idx].windspeed} - `;
+            metadata += `winddir: ${data[idx].winddir} - `;
+            render = true;
+            setTimeout(updateIndex, 2000);
         }
     }
 
-    function mapValue(value, inMin, inMax, outMin, outMax) {
-        return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+    function captureImage() {
+        const canvas = document.querySelector("canvas");
+        if (canvas) {
+            const url = canvas.toDataURL("image/png");
+            // images = [url, ...images];
+            images = [{ url, metadata }, ...images];
+        }
     }
-
-    const vertexShader = `
-        varying vec2 vUv;
-        void main() {
-            vUv = uv;
-            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-            gl_Position = projectionMatrix * mvPosition;
-        }
-    `;
-
-    const fragmentShader = `
-        uniform sampler2D map;
-        uniform vec3 fogColor;
-        uniform float fogNear;
-        uniform float fogFar;
-        uniform float cloudOpacity;
-        varying vec2 vUv;
-
-        void main() {
-            float depth = gl_FragCoord.z / gl_FragCoord.w;
-            float fogFactor = smoothstep(fogNear, fogFar, depth);
-            vec4 color = texture2D(map, vUv);
-            color.w *= pow(gl_FragCoord.z, 20.0);
-            color.w *= cloudOpacity;
-            gl_FragColor = mix(color, vec4(fogColor, color.w), fogFactor);
-        }
-    `;
 </script>
 
 <label>
-    Index:
+    Every:
     <input
         type="number"
-        bind:value={idx}
+        bind:value={every}
         min="0"
         max={data.length - 1}
-        step="10"
-        on:input={() => updateEnvironment(data[idx])}
+        step="1"
     />
-    {time}
 </label>
+<article>
+    {#if data.length > 0}
+        <section>
+            <Clouds3d data={data[idx]} />
+        </section>
+        <p>
+            {metadata}
+        </p>
+        <div class="images">
+            {#each images as img}
+                <div>
+                    <img src={img.url} alt="Cloud snapshot" />
+                    <p>
+                        {img.metadata}
+                    </p>
+                </div>
+            {/each}
+        </div>
+    {/if}
+</article>
+
+<style>
+    article {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    section {
+        height: 800px;
+        width: 800px;
+    }
+
+    .images {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: left;
+    }
+
+    .images div {
+        width: 100%;
+        width: calc(20% - 10px);
+        margin: 5px;
+        border-radius: 5px;
+        font-size: .875rem;
+    }
+
+    .images img {
+        width: 100%;
+        object-fit: contain;
+    }
+</style>

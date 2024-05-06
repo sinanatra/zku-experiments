@@ -30,7 +30,7 @@
     <article>
         {#each datum.slice(0, 16) as d, i}
             <section>
-                <Clouds data={d} {keys} />
+                <Clouds data={d} />
             </section>
         {/each}
     </article>
