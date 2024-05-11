@@ -4,6 +4,8 @@
 
     let data = [];
     let idx = 10;
+    let path = "clouds";
+
     onMount(async (d) => {
         const response = await fetch("weather.json");
         data = await response.json();
@@ -28,7 +30,29 @@
     <article>
         {#each datum.slice(0, 16) as d, i}
             <section>
-                <Clouds3d data={d} />
+                <div>
+                    <Clouds3d {path} data={d} />
+                </div>
+                <p>
+                    <span>
+                        {new Date(d.time).toLocaleString()}
+                    </span>
+                    <span>
+                        Solar Radiation: {d.solarradiation} -
+                    </span>
+                    <span>
+                        humidity:{d.humidity} -
+                    </span>
+                    <span>
+                        dewpoint:{d.dewpoint} -
+                    </span>
+                    <span>
+                        windspeed:{d.windspeed} -
+                    </span>
+                    <span>
+                        winddir:{d.winddir}
+                    </span>
+                </p>
             </section>
         {/each}
     </article>
@@ -41,11 +65,15 @@
     }
 
     section {
-        width: 100%;
+        width: calc(25vw - 20px);
         margin: 10px;
+        font-size: 0.875rem;
+    }
+
+    div {
+        width: 100%;
         width: calc(25vw - 20px);
         height: calc(25vw - 20px);
-
         border-radius: 5px;
         background-color: white;
         overflow: hidden;

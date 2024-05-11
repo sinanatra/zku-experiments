@@ -3,6 +3,7 @@
     import * as THREE from "three";
 
     export let data;
+    export let path;
 
     let container;
     let scene,
@@ -13,13 +14,13 @@
     let windSpeed = 0;
     let windDirection = 0;
     let cloudTextures = [];
+
     const texturePaths = [
-        "cloud1.png",
-        "cloud2.png",
-        "cloud3.png",
-        "cloud4.png",
-        "cloud5.png",
-        // "cloud6.png",
+        path + "/cloud_0.png",
+        path + "/cloud_1.png",
+        path + "/cloud_2.png",
+        path + "/cloud_3.png",
+        path + "/cloud_4.png",
     ];
 
     function loadTextures() {
@@ -86,24 +87,33 @@
         const hueAdjustment = mapValue(timeOfDay, 0, 23, -10, 10);
         const adjustedHue = tempHue + hueAdjustment;
 
-        const light = mapValue(datum.solarradiation, 0, 1000, 20, 100);
+        const light = mapValue(datum.solarradiation, 0, 1000, 10, 100);
         scene.background = new THREE.Color(
             `hsl(${adjustedHue}, 50%, ${light}%)`,
         );
 
-        const rain = mapValue(datum.humidity, 50, 100, 50, 0);
-        let cloudColorBrightness = Math.max(0, light * 0.5 + rain * 0.5);
-        let cloudColor = new THREE.Color(
-            `hsl(0, 0%, ${cloudColorBrightness}%)`,
-        );
+        const rain = mapValue(datum.humidity, 50, 100, 100, 0);
+        // let cloudColorBrightness = Math.max(0, light *  + rain * 0.);
+        let cloudColor = new THREE.Color(`hsl(0, 0%, ${rain}%)`);
 
         const dewpoint = mapValue(datum.dewpoint, 0, 30, 0, 20);
         const humidity = mapValue(datum.humidity, 50, 100, 0, 50);
-        let cloudDensity = humidity;
+
+        // let cloudDensity = humidity;
+        const dewpointDensity = mapValue(datum.dewpoint, 0, 30, 0, 20);
+        const humidityDensity = mapValue(datum.humidity, 50, 100, 0, 20);
+
+        let cloudDensity =
+            datum.rrain_piezo > 0
+                ? 0.2 * dewpointDensity + 0.8 * humidityDensity
+                : 0.5 * dewpointDensity + 0.5 * humidityDensity;
+
+        // console.log(cloudDensity);
+
         windSpeed = mapValue(datum.windspeed, 0, 50, 0, 1);
         windDirection = datum.winddir;
 
-        let cloudOpacity = mapValue(light, 0, 100, 0.3, 1);
+        let cloudOpacity = mapValue(datum.solarradiation, 0, 1000, 0.6, 1);
 
         updateClouds(cloudDensity, cloudColor, cloudOpacity);
     }
@@ -112,34 +122,43 @@
         cloudMeshes.forEach((mesh) => scene.remove(mesh));
         cloudMeshes = [];
 
-        const texture =
-            cloudTextures[Math.floor(Math.random() * cloudTextures.length)];
-        const material = new THREE.ShaderMaterial({
-            uniforms: {
-                map: { value: texture },
-                cloudColor: { value: cloudColor },
-                cloudOpacity: { value: cloudOpacity },
-                fogNear: { value: 50 },
-                fogFar: { value: 1500 },
-            },
-            vertexShader,
-            fragmentShader,
-            transparent: true,
-            depthWrite: false,
-            side: THREE.DoubleSide,
-        });
         for (let i = 0; i < cloudCover; i++) {
+            let nr = i % texturePaths.length;
+            const texture = cloudTextures[nr];
+
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    map: { value: texture },
+                    cloudColor: {
+                        value: new THREE.Color(cloudColor).toArray(),
+                    },
+                    cloudOpacity: { value: cloudOpacity },
+                    fogNear: { value: 50 },
+                    fogFar: { value: 1500 },
+                },
+                vertexShader: vertexShader,
+                fragmentShader: fragmentShader,
+                transparent: true,
+                depthWrite: false, // Ensure depth writing is off for proper transparency handling
+                side: THREE.DoubleSide,
+            });
+
             let plane = new THREE.Mesh(
-                new THREE.PlaneGeometry(cloudCover * 40, cloudCover * 40),
+                new THREE.PlaneGeometry(600, 600),
                 material,
             );
             plane.position.set(
-                Math.random() * 1000 - 500,
                 Math.random() * 500 - 250,
-                Math.random() * 600 - 200,
+                Math.random() * 500 - 250,
+                Math.random() * 1000 - 400,
             );
 
-            plane.rotation.z = Math.random() * 1000 - 750 * Math.PI;
+            let n = Math.random() * Math.PI;
+            // scene.rotation.x = n;
+            // scene.rotation.y = n;
+            scene.rotation.z = n;
+            // plane.rotation.z = Math.random() * Math.PI;
+
             scene.add(plane);
             cloudMeshes.push(plane);
         }
@@ -150,34 +169,39 @@
     }
 
     const vertexShader = `
-        varying vec2 vUv;
-        void main() {
-            vUv = uv;
-            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-            gl_Position = projectionMatrix * mvPosition;
-        }
+    varying vec2 vUv;
+    void main() {
+        vUv = uv;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * mvPosition;
+    }
     `;
 
     const fragmentShader = `
-        uniform sampler2D map;
-        uniform vec3 fogColor;
-        uniform float fogNear;
-        uniform float fogFar;
-        uniform float cloudOpacity;
-        varying vec2 vUv;
+    uniform sampler2D map;
+    uniform vec3 cloudColor;
+    uniform float cloudOpacity;
+    uniform float fogNear;
+    uniform float fogFar;
+    varying vec2 vUv;
 
-        void main() {
-            float depth = gl_FragCoord.z / gl_FragCoord.w;
-            float fogFactor = smoothstep(fogNear, fogFar, depth);
-            vec4 color = texture2D(map, vUv);
-            color.w *= pow(gl_FragCoord.z, 20.0);
-            color.w *= cloudOpacity;
-            gl_FragColor = mix(color, vec4(fogColor, color.w), fogFactor);
-        }
+    void main() {
+        float depth = gl_FragCoord.z / gl_FragCoord.w;
+        float fogFactor = smoothstep(fogNear, fogFar, depth);
+        vec4 texColor = texture2D(map, vUv);
+
+        // Apply the cloud color to the texture color based on cloud opacity
+        // vec4 modulatedColor = vec4(cloudColor * texColor.rgb, texColor.a * cloudOpacity);
+        vec4 modulatedColor = vec4(cloudColor * texColor.rgb, texColor.a );
+
+        // Combine modulated texture color with the background fog color based on the fog factor
+        gl_FragColor = mix(modulatedColor, vec4(cloudColor, modulatedColor.a), fogFactor);
+    }
     `;
 </script>
 
 <div bind:this={container}></div>
+
 <style>
     div {
         height: 100%;

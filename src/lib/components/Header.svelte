@@ -1,13 +1,14 @@
 <header>
     <span>
-        <a href="/3d">3D Single</a> -
-        <a href="/range">3D Range</a>
+        <strong> 3D </strong>
+        <a href="/">Single</a> -
+        <a href="/range">Range</a>
         ⎯
-        <a href="/">Clouds</a> -
-        <a href="/cloud">Cloud</a>
+        <strong> WEBGL </strong>
+        <a href="/procedural">Procedural</a>
         ⎯
-        <a href="/perlin">Perlin</a> -
-        <a href="/clouds2">Clouds</a> -
+        <strong> Perlin </strong>
+        <a href="/perlin">Single</a> -
     </span>
 </header>
 
