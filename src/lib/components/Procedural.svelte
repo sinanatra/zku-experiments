@@ -100,7 +100,7 @@
     const float pi = 3.14159;
     const vec2 r_vector = vec2(12.9898, 78.233);
     const float r_coeff = 43758.5453123;
-    const int octaves = 80;
+    const int octaves = 10;
     vec2 random2(vec2 st, float k) {
         vec2 v = vec2(0.0);
         st = mod(st, k);
@@ -151,7 +151,7 @@
 
         vec3 lightCloudColor = vec3(1.0, 1.0, 1.0);  
         vec3 darkCloudColor = vec3(0.8, 0.8, 0.8);  
-        float rainInfluence = smoothstep(0.2, 0.0, u_rain); 
+        float rainInfluence = smoothstep(0.1, 0.0, u_rain); 
         
         vec3 rainCloudColor = mix(lightCloudColor, darkCloudColor, rainInfluence); // Darker when rainy
         vec3 cloudColor = mix(rainCloudColor, darkCloudColor, cloudIntensity);
@@ -159,12 +159,12 @@
         vec3 skyColor = getHSB(u_skyHue, 0.5, u_light);
 
         float depthFactor = 1.0 - gl_FragCoord.y / u_resolution.y;
-        n -= depthFactor * 0.2;
+        n -= depthFactor * 0.01;
         vec3 col;
         col = mix(skyColor, cloudColor, smoothstep(0.0, 1.0, n));
 
         // Reduce overall brightness based on rain
-        float finalBrightness = mix(1.0, 0.5, rainInfluence); // Darker when it's raining
+        float finalBrightness = mix(1.0, 0.5, rainInfluence); 
         gl_FragColor = vec4(col * finalBrightness, 1.0);
     }`;
 </script>
