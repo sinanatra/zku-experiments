@@ -29,7 +29,7 @@
 
             const rain = s.map(data.humidity, 40, 100, 0.5, 0);
             const light = s.map(data.solarradiation, 0, 600, 0.2, 1.0);
-            const solar = s.map(data.solarradiation, 0, 600, 0.5, 1.0);
+            const solar = data.solarradiation == 0 ? 0.1 : s.map(data.solarradiation, 1, 600, 0.5, 1.0);
 
             const wind = s.map(data.windspeed, 0, 60, 0.01, 2);
             const windDirection = data.winddir;
