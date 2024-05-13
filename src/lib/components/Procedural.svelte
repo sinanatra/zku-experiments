@@ -1,17 +1,16 @@
 <script>
     import P5 from "p5-svelte";
-    let width = 500;
-    let height = 500;
+    let width = 800;
+    let height = 800;
 
     export let data;
     export let idx;
-    let previdx;
     let date;
     let randomSeed = 0;
+    let previdx;
 
     const sketch = (s) => {
         let myShader;
-        let frameCount = 0;
 
         s.setup = () => {
             s.createCanvas(width, height, s.WEBGL);
@@ -19,48 +18,49 @@
             s.angleMode(s.DEGREES);
             myShader = s.createShader(vs, fs);
             s.shader(myShader);
-            randomSeed = s.random(1000);
+            randomSeed = s.random(200);
         };
 
         s.draw = () => {
             if (idx != previdx) {
-                randomSeed = s.random(1000);
+                randomSeed = s.random(200);
             }
             previdx = idx;
-            const rain = s.map(data.humidity, 40, 100, 1, 0);
-            const light = s.map(data.solarradiation, 0, 600, 0.2, 1);
 
-            const wind = s.map(data.windspeed, 0, 30, 0, 2);
+            const rain = s.map(data.humidity, 40, 100, 0.5, 0);
+            const light = s.map(data.solarradiation, 0, 600, 0.2, 1.0);
+            const solar = s.map(data.solarradiation, 0, 600, 0.5, 1.0);
+
+            const wind = s.map(data.windspeed, 0, 60, 0.01, 2);
             const windDirection = data.winddir;
+            const windVector = [s.cos(windDirection), s.sin(windDirection)];
 
-            const dewpointDensity = s.map(data.dewpoint, 0, 30, 0, 1);
-            const humidityDensity = s.map(data.humidity, 50, 100, 0, 1);
+            const dewpointDensity = s.map(data.dewpoint, 10, 20, 0.01, 4);
+            const humidityDensity = s.map(data.humidity, 60, 100, 0.01, 4);
 
-            let cloudDensity =
-                data.rrain_piezo > 0
-                    ? 0.2 * dewpointDensity + 0.8 * humidityDensity
-                    : 0.5 * dewpointDensity + 0.5 * humidityDensity;
+            let cloudDensity = dewpointDensity * humidityDensity;
 
-            const tempHue = 210;
-            const timeOfDay = new Date(data.time).getHours();
+            // const timeOfDay = new Date(data.time).getHours();
+            // const hueAdjustment = s.map(timeOfDay, 0, 23, -10, 0);
+            const tempHue = 213 / 360;
 
-            const hueAdjustment = s.map(timeOfDay, 0, 23, -5, 5);
-            const adjustedHue = (tempHue + hueAdjustment) / 360;
+            myShader.setUniform("iResolution", [width, height]);
+            myShader.setUniform("windVector", windVector);
+            myShader.setUniform("iTime", s.millis() / 6000 + randomSeed);
+            myShader.setUniform("skyDarkness", tempHue);
+            myShader.setUniform("speed", wind);
+            myShader.setUniform("cloudscale", 0.8);
+            myShader.setUniform("clouddark", rain);
+            myShader.setUniform("cloudlight", light);
+            myShader.setUniform("solar", solar);
+            myShader.setUniform("cloudcover", cloudDensity); //0.3
+            myShader.setUniform("cloudalpha", 8.0);
+            myShader.setUniform("skytint", tempHue);
 
-            myShader.setUniform("u_cloud_density", cloudDensity);
-            myShader.setUniform("u_seed", randomSeed);
-            myShader.setUniform(
-                "u_time",
-                wind != 0 ? (frameCount / 60) * wind : 0,
-            );
-            myShader.setUniform("u_resolution", [width, height]);
-            myShader.setUniform("u_windDirection", windDirection);
-            myShader.setUniform("u_skyHue", adjustedHue);
-            myShader.setUniform("u_rain", rain);
-            myShader.setUniform("u_light", light);
-
-            s.fill(255); // Set the fill color
+            // draw
+            s.fill(255);
             s.beginShape();
+
             s.vertex(0, 0);
             s.vertex(width, 0);
             s.vertex(width, height);
@@ -77,96 +77,158 @@
             s.quad(-1, -1, -1, 1, 1, 1, 1, -1);
 
             date = data.time;
-            frameCount++;
         };
     };
 
     let vs = `
-       precision mediump float;
-       attribute vec3 aPosition;
-       void main(void){
-        gl_Position = vec4(aPosition, 1.0);
-       }`;
-
-    let fs = `precision mediump float;
-    uniform vec2 u_resolution;
-    uniform float u_cloud_density;
-    uniform float u_rain;  // Rain intensity
-    uniform float u_light;  // Ambient light intensity
-    uniform float u_time;
-    uniform float u_windDirection;
-    uniform float u_seed;
-    uniform float u_skyHue;
-    const float pi = 3.14159;
-    const vec2 r_vector = vec2(12.9898, 78.233);
-    const float r_coeff = 43758.5453123;
-    const int octaves = 10;
-    vec2 random2(vec2 st, float k) {
-        vec2 v = vec2(0.0);
-        st = mod(st, k);
-        v.x = sin(dot(st, vec2(127.1, 311.7))) * r_coeff;
-        v.y = sin(dot(st, vec2(269.5, 183.3))) * r_coeff;
-        return -1.0 + 2.0 * fract(v);
-    }
-    float dnoise(vec2 p, float k) {
-        vec2 i = floor(p);
-        vec2 f = fract(p);
-        vec2 u = f * f * (3.0 - 2.0 * f);
-        vec2 p_00 = vec2(0.0, 0.0);
-        vec2 p_01 = vec2(0.0, 1.0);
-        vec2 p_10 = vec2(1.0, 0.0);
-        vec2 p_11 = vec2(1.0, 1.0);
-        float value_00 = dot(random2(i + p_00, k), f - p_00);
-        float value_01 = dot(random2(i + p_01, k), f - p_01);
-        float value_10 = dot(random2(i + p_10, k), f - p_10);
-        float value_11 = dot(random2(i + p_11, k), f - p_11);
-        return mix(mix(value_00, value_10, u.x), mix(value_01, value_11, u.x), u.y);
-    }
-    float fbm(vec2 st) {
-        float value = 0.0;
-        float amplitude = 2.5;
-        float k = 40.0;
-        for (int i = 0; i < octaves; i++) {
-            value += amplitude * dnoise(st, u_seed);
-            st *= 2.0;
-            k *= 2.0;
-            amplitude *= 0.5;
+        attribute vec3 aPosition;
+        void main() {
+            gl_Position = vec4(aPosition, 1.0);
         }
-        return value;
+    `;
+
+    let fs = `
+    precision highp float;
+
+    uniform vec2 iResolution;
+    uniform float iTime;
+    uniform float skyDarkness;
+
+    uniform float cloudscale;
+    uniform float speed;
+    uniform float clouddark;
+    uniform float cloudlight;
+    uniform float solar;
+
+    uniform float cloudcover;
+    uniform float cloudalpha;
+    uniform float skytint;
+
+    uniform vec2 windVector;
+
+    const mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+
+    vec2 hash(vec2 p) {
+        p = vec2(dot(p, vec2(127.1,311.7)), dot(p, vec2(269.5,183.3)));
+        return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
     }
+
+    float noise(in vec2 p) {
+        const float K1 = 0.366025404; // (sqrt(3)-1)/2;
+        const float K2 = 0.211324865; // (3-sqrt(3))/6;
+        vec2 i = floor(p + (p.x+p.y)*K1);
+        vec2 a = p - i + (i.x+i.y)*K2;
+        vec2 o = (a.x > a.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+        vec2 b = a - o + K2;
+        vec2 c = a - 1.0 + 2.0 * K2;
+        vec3 h = max(0.5 - vec3(dot(a,a), dot(b,b), dot(c,c)), 0.0);
+        vec3 n = h*h*h*h * vec3(dot(a, hash(i + 0.0)), dot(b, hash(i + o)), dot(c, hash(i + 1.0)));
+        return dot(n, vec3(70.0));
+    }
+
+    float fbm(vec2 n) {
+        float total = 0.0, amplitude = 0.1;
+        for (int i = 0; i < 7; i++) {
+            total += noise(n) * amplitude;
+            n = m * n;
+            amplitude *= 0.4;
+        }
+        return total;
+    }
+
     vec3 getHSB(float hue, float saturation, float brightness) {
-        vec3 c = vec3(hue, saturation, brightness);
-        vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
-        rgb = rgb * rgb * (3.0 - 2.0 * rgb);
-        return c.z * mix(vec3(1.0), rgb, c.y);
+        hue = mod(hue, 1.0);  
+        float c = brightness * saturation;
+        float x = c * (1.0 - abs(mod(hue * 6.0, 2.0) - 1.0));
+        float m = brightness - c;
+        vec3 rgb;
+
+        if (hue < 1.0 / 6.0) rgb = vec3(c, x, 0.0);
+        else if (hue < 1.0 / 3.0) rgb = vec3(x, c, 0.0);
+        else if (hue < 0.5) rgb = vec3(0.0, c, x);
+        else if (hue < 2.0 / 3.0) rgb = vec3(0.0, x, c);
+        else if (hue < 5.0 / 6.0) rgb = vec3(x, 0.0, c);
+        else rgb = vec3(c, 0.0, x);
+
+        rgb += vec3(m);
+        return rgb;
     }
-    void main(void) {
-        vec2 p = gl_FragCoord.xy / min(u_resolution.x, u_resolution.y);
-        float angle = radians(u_windDirection);
-        vec2 windOffset = vec2(cos(angle), sin(angle)) * u_time * 0.1;
-        vec2 st = p + u_seed + windOffset;
-        float n = fbm(st) - u_cloud_density;
-        n = n * n * (2.0 - 2.0 * n);
-        float cloudIntensity = smoothstep(0.0, 5.0, n);
 
-        vec3 lightCloudColor = vec3(1.0, 1.0, 1.0);  
-        vec3 darkCloudColor = vec3(0.8, 0.8, 0.8);  
-        float rainInfluence = smoothstep(0.1, 0.0, u_rain); 
-        
-        vec3 rainCloudColor = mix(lightCloudColor, darkCloudColor, rainInfluence); // Darker when rainy
-        vec3 cloudColor = mix(rainCloudColor, darkCloudColor, cloudIntensity);
+    void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+        vec2 p = fragCoord.xy / iResolution.xy;
+        vec2 uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        float time = iTime * speed;
+        float q = fbm(uv * cloudscale * 0.5);
 
-        vec3 skyColor = getHSB(u_skyHue, 0.5, u_light);
+        // Adjust the cloud and wave patterns with wind direction
+        float r = 0.0;
+        uv *= cloudscale;
+        uv -= q - time * windVector;
+        float weight = 0.8;
+        for (int i = 0; i < 8; i++) {
+            r += abs(weight * noise(uv));
+            uv = m * uv + time * windVector;
+            weight *= 0.7;
+        }
 
-        float depthFactor = 1.0 - gl_FragCoord.y / u_resolution.y;
-        n -= depthFactor * 0.01;
-        vec3 col;
-        col = mix(skyColor, cloudColor, smoothstep(0.0, 1.0, n));
+        float f = 0.0;
+        uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        uv *= cloudscale;
+        uv -= q - time * windVector;
+        weight = 0.7;
+        for (int i = 0; i < 8; i++) {
+            f += weight * noise(uv);
+            uv = m * uv + time * windVector;
+            weight *= 0.6;
+        }
 
-        // Reduce overall brightness based on rain
-        float finalBrightness = mix(1.0, 0.5, rainInfluence); 
-        gl_FragColor = vec4(col * finalBrightness, 1.0);
-    }`;
+        f *= r + f;
+
+        float c = 0.0;
+        time = iTime * speed * 2.0;
+        uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        uv *= cloudscale * 2.0;
+        uv -= q - time * windVector;
+        weight = 0.4;
+        for (int i = 0; i < 7; i++) {
+            c += weight * noise(uv);
+            uv = m * uv + time * windVector;
+            weight *= 0.6;
+        }
+
+        float c1 = 0.0;
+        time = iTime * speed * 3.0;
+        uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        uv *= cloudscale * 3.0;
+        uv -= q - time * windVector;
+        weight = 0.4;
+        for (int i = 0; i < 7; i++) {
+            c1 += abs(weight * noise(uv));
+            uv = m * uv + time * windVector;
+            weight *= 0.6;
+        }
+
+        c += c1;
+
+        vec3 skycolour1 = getHSB(skyDarkness, 0.6, solar);
+        vec3 skycolour2 = getHSB(skyDarkness, 0.4, solar + 0.3);
+        vec3 skycolour = mix(skycolour2, skycolour1, clamp(p.y, 0.0, 1.0));
+        skycolour = skycolour * skyDarkness;
+
+        vec3 cloudcolour = vec3(1.1, 1.1, 0.9) * clamp((clouddark + cloudlight * c), 0.0, 1.0);
+
+        f = cloudcover + cloudalpha * f * r;
+
+        vec3 result = mix(skycolour, clamp(skytint * skycolour + cloudcolour, 0.0, 1.0), clamp(f + c, 0.0, 1.0));
+
+        fragColor = vec4(result, 1.0);
+    }
+
+    void main() {
+        mainImage(gl_FragColor, gl_FragCoord.xy);
+    }
+
+    `;
 </script>
 
 {#if data.length == 0}

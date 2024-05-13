@@ -30,7 +30,7 @@
             metadata += `windspeed: ${data[idx].windspeed} - `;
             metadata += `winddir: ${data[idx].winddir} - `;
             render = true;
-            setTimeout(updateIndex, 2000);
+            setTimeout(updateIndex, 10000);
         }
     }
 
@@ -56,7 +56,7 @@
         bind:value={idx}
         min="0"
         max={data.length - 1}
-        step="{every}"
+        step={every}
     />
     Every:
     <input
@@ -112,7 +112,6 @@
     .images div {
         width: 100%;
         width: calc(20% - 10px);
-
         margin: 5px;
         border-radius: 5px;
         font-size: 0.875rem;
@@ -120,6 +119,7 @@
 
     .images img {
         width: 100%;
+        /* border-radius: 100%; */
         object-fit: contain;
     }
 </style>

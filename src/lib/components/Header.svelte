@@ -5,8 +5,7 @@
         <a href="/range">Range</a>
         ⎯
         <strong> WEBGL </strong>
-        <a href="/procedural">Procedural</a>  -
-        <a href="/procedural2">Second</a>
+        <a href="/procedural">Procedural</a>
         ⎯
         <strong> Perlin </strong>
         <a href="/perlin">Single</a> -
