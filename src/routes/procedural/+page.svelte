@@ -2,7 +2,7 @@
     import Procedural from "@components/Procedural.svelte";
     import { onMount } from "svelte";
     let idx = 0;
-    let every = 1;
+    let every = 60;
 
     let data = [];
     let images = [];
@@ -23,14 +23,8 @@
                 requestAnimationFrame(captureImage);
             }
 
-            metadata = `${new Date(data[idx].time).toLocaleString()} - `;
-            metadata += `Solar Radiation: ${data[idx].solarradiation} - `;
-            metadata += `humidity: ${data[idx].humidity} - `;
-            metadata += `dewpoint: ${data[idx].dewpoint} - `;
-            metadata += `windspeed: ${data[idx].windspeed} - `;
-            metadata += `winddir: ${data[idx].winddir} - `;
             render = true;
-            setTimeout(updateIndex, 10000);
+            setTimeout(updateIndex, 5000);
         }
     }
 
@@ -70,7 +64,7 @@
 <article>
     {#if data.length > 0}
         <section>
-            <Procedural {idx} data={data[idx]} />
+            <Procedural {idx} {data} />
         </section>
         <p>
             {metadata}

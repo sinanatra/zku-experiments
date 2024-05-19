@@ -5,16 +5,18 @@
 
     export let data;
     export let idx;
-    let date;
+    let metadata;
     let randomSeed = 0;
     let previdx;
+    let distortion = 1.0;
+    let amplitude = 0.1;
 
     const sketch = (s) => {
         let myShader;
 
         s.setup = () => {
             s.createCanvas(width, height, s.WEBGL);
-            s.pixelDensity(1);
+            // s.pixelDensity(1);
             s.angleMode(s.DEGREES);
             myShader = s.createShader(vs, fs);
             s.shader(myShader);
@@ -27,20 +29,24 @@
             }
             previdx = idx;
 
-            const rain = s.map(data.humidity, 40, 100, 0.5, 0);
-            const light = s.map(data.solarradiation, 0, 600, 0.2, 1.0);
-            const solar = data.solarradiation == 0 ? 0.1 : s.map(data.solarradiation, 1, 600, 0.5, 1.0);
+            const rain = s.map(data[idx].humidity, 40, 100, 0.5, 0);
+            const light = s.map(data[idx].solarradiation, 0, 600, 0.2, 1.0);
+            const solar =
+                data[idx].solarradiation == 0
+                    ? 0.1
+                    : s.map(data[idx].solarradiation, 1, 300, 0.5, 1.0);
 
-            const wind = s.map(data.windspeed, 0, 60, 0.01, 2);
-            const windDirection = data.winddir;
+            const wind = s.map(data[idx].windspeed, 0, 60, 0.01, 2);
+
+            const windDirection = (data[idx].winddir + 180) % 360;
             const windVector = [s.cos(windDirection), s.sin(windDirection)];
 
-            const dewpointDensity = s.map(data.dewpoint, 10, 20, 0.01, 4);
-            const humidityDensity = s.map(data.humidity, 60, 100, 0.01, 4);
+            const dewpointDensity = s.map(data[idx].dewpoint, 10, 20, 0.01, 4);
+            const humidityDensity = s.map(data[idx].humidity, 60, 100, 0.01, 4);
 
             let cloudDensity = dewpointDensity * humidityDensity;
 
-            // const timeOfDay = new Date(data.time).getHours();
+            // const timeOfDay = new Date(data[idx].time).getHours();
             // const hueAdjustment = s.map(timeOfDay, 0, 23, -10, 0);
             const tempHue = 213 / 360;
 
@@ -56,6 +62,9 @@
             myShader.setUniform("cloudcover", cloudDensity); //0.3
             myShader.setUniform("cloudalpha", 8.0);
             myShader.setUniform("skytint", tempHue);
+
+            myShader.setUniform("distortion", distortion);
+            myShader.setUniform("iAmplitude", amplitude);
 
             // draw
             s.fill(255);
@@ -76,7 +85,12 @@
 
             s.quad(-1, -1, -1, 1, 1, 1, 1, -1);
 
-            date = data.time;
+            metadata = `${new Date(data[idx].time).toLocaleString()} - `;
+            metadata += `Solar Radiation: ${data[idx].solarradiation} - `;
+            metadata += `humidity: ${data[idx].humidity} - `;
+            metadata += `dewpoint: ${data[idx].dewpoint} - `;
+            metadata += `windspeed: ${data[idx].windspeed} - `;
+            metadata += `winddir:   ${data[idx].winddir}, ${directionToArrow(data[idx].winddir)}  `;
         };
     };
 
@@ -93,6 +107,8 @@
     uniform vec2 iResolution;
     uniform float iTime;
     uniform float skyDarkness;
+    uniform float distortion;
+    uniform float iAmplitude;
 
     uniform float cloudscale;
     uniform float speed;
@@ -127,14 +143,17 @@
     }
 
     float fbm(vec2 n) {
-        float total = 0.0, amplitude = 0.1;
+        float nr = distortion; // test, def is 1.0
+        float total = 0.0, amplitude = iAmplitude; // test higher original is 0.1
         for (int i = 0; i < 7; i++) {
             total += noise(n) * amplitude;
-            n = m * n;
+            n = m * n * nr;
             amplitude *= 0.4;
         }
         return total;
     }
+
+    
 
     vec3 getHSB(float hue, float saturation, float brightness) {
         hue = mod(hue, 1.0);  
@@ -160,7 +179,6 @@
         float time = iTime * speed;
         float q = fbm(uv * cloudscale * 0.5);
 
-        // Adjust the cloud and wave patterns with wind direction
         float r = 0.0;
         uv *= cloudscale;
         uv -= q - time * windVector;
@@ -210,8 +228,8 @@
 
         c += c1;
 
-        vec3 skycolour1 = getHSB(skyDarkness, 0.6, solar);
-        vec3 skycolour2 = getHSB(skyDarkness, 0.4, solar + 0.3);
+        vec3 skycolour1 = getHSB(skyDarkness, 0.8, solar);
+        vec3 skycolour2 = getHSB(skyDarkness, 0.6, solar + 0.3);
         vec3 skycolour = mix(skycolour2, skycolour1, clamp(p.y, 0.0, 1.0));
         skycolour = skycolour * skyDarkness;
 
@@ -229,15 +247,40 @@
     }
 
     `;
+
+    function directionToArrow(windDir) {
+        if (
+            (windDir >= 337.5 && windDir <= 360) ||
+            (windDir >= 0 && windDir < 22.5)
+        )
+            return "↑"; // North
+        if (windDir >= 22.5 && windDir < 67.5) return "↗"; // Northeast
+        if (windDir >= 67.5 && windDir < 112.5) return "→"; // East
+        if (windDir >= 112.5 && windDir < 157.5) return "↘"; // Southeast
+        if (windDir >= 157.5 && windDir < 202.5) return "↓"; // South
+        if (windDir >= 202.5 && windDir < 247.5) return "↙"; // Southwest
+        if (windDir >= 247.5 && windDir < 292.5) return "←"; // West
+        if (windDir >= 292.5 && windDir < 337.5) return "↖"; // Northwest
+    }
 </script>
 
-{#if data.length == 0}
+{#if data[idx].length == 0}
     <article>Loading...</article>
 {:else}
+    Distortion:
+    <input
+        type="number"
+        bind:value={distortion}
+        min="1.0"
+        max="30000"
+        step="0.1"
+    />
+    Amplitude:
+    <input type="number" bind:value={amplitude} min="0.0" max="5" step="0.01" />
     <section bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
         <p>
-            {date?.split("T")[0]} - {date?.split("T")[1]?.split(".")[0]}
+            {metadata}
         </p>
     </section>
 {/if}

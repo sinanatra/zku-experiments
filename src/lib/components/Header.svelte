@@ -1,14 +1,8 @@
 <header>
     <span>
-        <strong> 3D </strong>
-        <a href="/">Single</a> -
-        <a href="/range">Range</a>
+        <a href="/procedural">Clouds</a>
         ⎯
-        <strong> WEBGL </strong>
-        <a href="/procedural">Procedural</a>
-        ⎯
-        <strong> Perlin </strong>
-        <a href="/perlin">Single</a> -
+        <a href="/viz">Viz</a>
     </span>
 </header>
 

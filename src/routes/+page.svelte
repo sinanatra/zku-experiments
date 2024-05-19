@@ -31,7 +31,7 @@
             metadata += `windspeed: ${data[idx].windspeed} - `;
             metadata += `winddir: ${data[idx].winddir} - `;
             render = true;
-            setTimeout(updateIndex, 2000);
+            setTimeout(updateIndex, 20000);
         }
     }
 
