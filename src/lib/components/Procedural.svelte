@@ -277,19 +277,19 @@
             {new Date(data[idx].time).toLocaleString()}
         </span>
         <span>
-            Solar Radiation:{data[idx].solarradiation} /
+            Solar Radiation: {data[idx].solarradiation} /
         </span>
         <span>
-            humidity:{data[idx].humidity} /
+            humidity: {data[idx].humidity} /
         </span>
         <span>
-            dewpoint:{data[idx].dewpoint} /
+            dewpoint: {data[idx].dewpoint} /
         </span>
         <span>
-            windspeed:{data[idx].windspeed} /
+            windspeed: {data[idx].windspeed} /
         </span>
         <span>
-            winddir:{data[idx].winddir}
+            winddir: {data[idx].winddir}
         </span>
     </div>
 {/if}
