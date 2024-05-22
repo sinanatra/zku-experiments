@@ -9,12 +9,13 @@
     onMount(async () => {
         const response = await fetch("weather.json");
         data = await response.json();
+        data = data.reverse();
         updateDataSegments();
         getRandomParams()
     });
 
     function updateDataSegments() {
-        const segmentSize = Math.ceil(data.length / numberOfViz);
+        const segmentSize = 1440 //Math.ceil(data.length / numberOfViz);
         dataSegments = Array.from({ length: numberOfViz }, (_, i) => {
             const start = i * segmentSize;
             return data.slice(start, start + segmentSize);
