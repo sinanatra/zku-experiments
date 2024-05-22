@@ -9,6 +9,7 @@
         const response = await fetch("weather.json");
         data = await response.json();
         range = data.length;
+        getRandomParams();
     });
 
     $: splitData = data.slice(0, range);
@@ -62,7 +63,7 @@
         // "ws90cap_volt",
         "yrain_piezo",
     ];
-    $: selectedParams = ["humidity", "windspeed", "winddir"];
+    $: selectedParams = [];
 
     $: console.log(
         selectedParams,
@@ -74,7 +75,7 @@
         selectedParams = shuffled.slice(0, 3);
     }
 
-    setInterval(getRandomParams, 10000);
+    setInterval(getRandomParams, 2000);
 </script>
 
 <!-- <label for="range"
