@@ -40,7 +40,7 @@
             const windDirection = (data[idx].winddir + 180) % 360;
             const windVector = [s.cos(windDirection), s.sin(windDirection)];
 
-            const dewpointDensity = s.map(data[idx].dewpoint, 10, 20, 0.01, 4);
+            const dewpointDensity = s.map(data[idx].dewpoint, -5, 20, 0.01, 4);
             const humidityDensity = s.map(data[idx].humidity, 60, 100, 0.01, 4);
 
             let cloudDensity = dewpointDensity * humidityDensity;
