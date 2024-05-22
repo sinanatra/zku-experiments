@@ -8,17 +8,76 @@
     onMount(async () => {
         const response = await fetch("weather.json");
         data = await response.json();
-        // data.reverse();
+        range = data.length;
     });
 
     $: splitData = data.slice(0, range);
 
-    let selectedParams = [];
+    let fullParams = [
+        // "baromabs",
+        "baromrel",
+        // "beaufortscale",
+        "dewpoint",
+        "drain_piezo",
+        "erain_piezo",
+        "feelslike",
+        "frostpoint",
+        // "gain10_piezo",
+        // "gain20_piezo",
+        // "gain30_piezo",
+        // "gain40_piezo",
+        // "gain50_piezo",
+        // "heap",
+        "heatindex",
+        "hrain_piezo",
+        "humidex",
+        "humidity",
+        "humidity1",
+        "humidityabs",
+        "humidityabsin",
+        "humidityin",
+        "maxdailygust",
+        "mrain_piezo",
+        "rrain_piezo",
+        "runtime",
+        "simmerindex",
+        // "soilbatt1",
+        // "soilbatt2",
+        // "soilmoisture1",
+        // "soilmoisture2",
+        "solarradiation",
+        "solarradiation_perceived",
+        "temp",
+        // "temp1",
+        // "tempin",
+        // "tf_batt1",
+        // "tf_ch1",
+        "uv",
+        "wh90batt",
+        "winddir",
+        "windgust",
+        "windspeed",
+        "wrain_piezo",
+        // "ws90_ver",
+        // "ws90cap_volt",
+        "yrain_piezo",
+    ];
+    $: selectedParams = ["humidity", "windspeed", "winddir"];
 
-    $: console.log(selectedParams);
+    $: console.log(
+        selectedParams,
+        selectedParams.map((d) => selectedParams[0][d]),
+    );
+
+    function getRandomParams() {
+        const shuffled = fullParams.sort(() => 0.5 - Math.random());
+        selectedParams = shuffled.slice(0, 3);
+    }
+
+    setInterval(getRandomParams, 10000);
 </script>
 
-<label for="range"
+<!-- <label for="range"
     >Range:
     <input
         type="number"
@@ -28,9 +87,9 @@
         max={data.length}
         step="10"
     />
-</label>
+</label> -->
 
-{#each ["baromabs", "baromrel", "beaufortscale", "dewpoint", "drain_piezo", "erain_piezo", "feelslike", "frostpoint", "gain10_piezo", "gain20_piezo", "gain30_piezo", "gain40_piezo", "gain50_piezo", "heap", "heatindex", "hrain_piezo", "humidex", "humidity", "humidity1", "humidityabs", "humidityabsin", "humidityin", "interval", "maxdailygust", "mrain_piezo", "rrain_piezo", "runtime", "safe_exposure_time_skin_type_1", "safe_exposure_time_skin_type_2", "safe_exposure_time_skin_type_3", "safe_exposure_time_skin_type_4", "safe_exposure_time_skin_type_5", "safe_exposure_time_skin_type_6", "simmerindex", "soilbatt1", "soilbatt2", "soilmoisture1", "soilmoisture2", "solarradiation", "solarradiation_perceived", "temp", "temp1", "tempin", "tf_batt1", "tf_ch1", "uv", "wh25batt", "wh90batt", "windchill", "winddir", "windgust", "windspeed", "wrain_piezo", "ws90_ver", "ws90cap_volt", "yrain_piezo"] as param}
+<!-- {#each fullParams as param}
     <label>
         <input
             type="checkbox"
@@ -40,12 +99,12 @@
         />
         {param}
     </label>
-{/each}
+{/each} -->
 
 <article>
     {#if splitData.length > 0}
         <section>
-            <Viz data={splitData} {selectedParams}/>
+            <Viz data={splitData} {selectedParams} />
         </section>
     {/if}
 </article>

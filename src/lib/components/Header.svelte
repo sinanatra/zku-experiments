@@ -1,6 +1,6 @@
 <header>
     <span>
-        <a href="/procedural">Clouds</a>
+        <a href="/">Clouds</a>
         ⎯
         <a href="/viz">Viz</a>
     </span>
@@ -13,11 +13,28 @@
     }
 
     header {
+        width: 100%;
+        height: 100px;
+        position: absolute;
+        top: 0;
+        color: white;
+        z-index: 10000;
+    }
+
+    span {
+        display: none;
+    }
+
+    header:hover span {
+        display: block;
+    }
+
+    header {
         margin-bottom: 5px;
     }
 
     a {
-        color: black;
+        color: white;
         text-decoration: none;
     }
 </style>

@@ -5,10 +5,9 @@
 
     export let data;
     export let idx;
-    let metadata;
     let randomSeed = 0;
     let previdx;
-    let distortion = 1.0;
+    let distortion = 0.05; //1.0;
     let amplitude = 0.1;
 
     const sketch = (s) => {
@@ -84,13 +83,6 @@
             s.endShape();
 
             s.quad(-1, -1, -1, 1, 1, 1, 1, -1);
-
-            metadata = `${new Date(data[idx].time).toLocaleString()} - `;
-            metadata += `Solar Radiation: ${data[idx].solarradiation} - `;
-            metadata += `humidity: ${data[idx].humidity} - `;
-            metadata += `dewpoint: ${data[idx].dewpoint} - `;
-            metadata += `windspeed: ${data[idx].windspeed} - `;
-            metadata += `winddir:   ${data[idx].winddir}, ${directionToArrow(data[idx].winddir)}  `;
         };
     };
 
@@ -267,7 +259,7 @@
 {#if data[idx].length == 0}
     <article>Loading...</article>
 {:else}
-    Distortion:
+    <!-- Distortion:
     <input
         type="number"
         bind:value={distortion}
@@ -276,13 +268,30 @@
         step="0.1"
     />
     Amplitude:
-    <input type="number" bind:value={amplitude} min="0.0" max="5" step="0.01" />
+    <input type="number" bind:value={amplitude} min="0.0" max="5" step="0.01" /> -->
     <section bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
-        <p>
-            {metadata}
-        </p>
     </section>
+    <div class="metadata">
+        <span>
+            {new Date(data[idx].time).toLocaleString()}
+        </span>
+        <span>
+            Solar Radiation:{data[idx].solarradiation} /
+        </span>
+        <span>
+            humidity:{data[idx].humidity} /
+        </span>
+        <span>
+            dewpoint:{data[idx].dewpoint} /
+        </span>
+        <span>
+            windspeed:{data[idx].windspeed} /
+        </span>
+        <span>
+            winddir:{data[idx].winddir}
+        </span>
+    </div>
 {/if}
 
 <style>
@@ -290,13 +299,14 @@
         height: 100%;
     }
 
-    p {
+    .metadata {
         position: absolute;
-        z-index: 1000;
-        bottom: 0px;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        background: white;
+        bottom: 0;
+        font-size: 20px;
+        padding: 5px;
+        color: black;
+    }
+    .metadata span:first-of-type {
+        color: yellow;
     }
 </style>

@@ -19,6 +19,7 @@
 		"d3": "^7.9.0",
 		"d3-force-3d": "^3.0.5",
 		"delaunator": "^5.0.1",
+		"delaunay-triangulate": "^1.1.6",
 		"ml": "^6.0.0",
 		"p5-svelte": "^3.1.2",
 		"simplex-noise": "^4.0.1",

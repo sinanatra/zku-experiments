@@ -1,8 +1,9 @@
 <script>
-    import Procedural from "@components/Procedural.svelte";
+    import Clouds3d from "@components/Clouds3d.svelte";
     import { onMount } from "svelte";
     let idx = 0;
-    let every = 60;
+    let every = 5;
+    let path = "clouds";
 
     let data = [];
     let images = [];
@@ -23,8 +24,14 @@
                 requestAnimationFrame(captureImage);
             }
 
+            metadata = `${new Date(data[idx].time).toLocaleString()} - `;
+            metadata += `Solar Radiation: ${data[idx].solarradiation} - `;
+            metadata += `humidity: ${data[idx].humidity} - `;
+            metadata += `dewpoint: ${data[idx].dewpoint} - `;
+            metadata += `windspeed: ${data[idx].windspeed} - `;
+            metadata += `winddir: ${data[idx].winddir} - `;
             render = true;
-            setTimeout(updateIndex, 5000);
+            setTimeout(updateIndex, 20000);
         }
     }
 
@@ -50,7 +57,7 @@
         bind:value={idx}
         min="0"
         max={data.length - 1}
-        step={every}
+        step="1"
     />
     Every:
     <input
@@ -64,7 +71,7 @@
 <article>
     {#if data.length > 0}
         <section>
-            <Procedural {idx} {data} />
+            <Clouds3d {path} data={data[idx]} />
         </section>
         <p>
             {metadata}
@@ -106,6 +113,7 @@
     .images div {
         width: 100%;
         width: calc(20% - 10px);
+
         margin: 5px;
         border-radius: 5px;
         font-size: 0.875rem;
@@ -113,7 +121,6 @@
 
     .images img {
         width: 100%;
-        /* border-radius: 100%; */
         object-fit: contain;
     }
 </style>
