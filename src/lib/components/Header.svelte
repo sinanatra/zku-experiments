@@ -3,6 +3,8 @@
         <a href="/">Clouds</a>
         ⎯
         <a href="/viz">Viz</a>
+        ⎯
+        <a href="/daily">daily</a>
     </span>
 </header>
 

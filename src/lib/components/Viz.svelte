@@ -160,7 +160,7 @@
     }
 </script>
 
-<div bind:this={container} style="width: 100vw; height: 100vh;"></div>
+<div bind:this={container} style="width: 100%; height: 100%;"></div>
 
 <style>
     div {

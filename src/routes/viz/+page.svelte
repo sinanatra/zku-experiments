@@ -112,11 +112,10 @@
 <style>
     article {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
     }
-    label {
-        margin-bottom: 10px;
+
+    section {
+        width: 100vw;
+        height: 100vh;
     }
 </style>
