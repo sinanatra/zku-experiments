@@ -48,7 +48,7 @@
             }
         } else {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color("black");
+            scene.background = new THREE.Color("#222");
         }
 
         const positions = [];
@@ -102,7 +102,7 @@
             mesh = new THREE.Mesh(
                 pointsGeometry,
                 new THREE.MeshBasicMaterial({
-                    color: "white",
+                    color: "#ccc",
                     wireframe: true,
                 }),
             );
