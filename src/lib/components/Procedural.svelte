@@ -7,8 +7,8 @@
     export let idx;
     let randomSeed = 0;
     let previdx;
-    let distortion = 0.05; //1.0;
-    let amplitude = 0.1;
+    let distortion = 0.5; //1.0;
+    let amplitude = 0.05;
 
     const sketch = (s) => {
         let myShader;

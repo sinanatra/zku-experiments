@@ -10,6 +10,7 @@
         const response = await fetch("weather.json");
         data = await response.json();
         updateDataSegments();
+        getRandomParams()
     });
 
     function updateDataSegments() {
@@ -51,7 +52,8 @@
         "wrain_piezo",
         "yrain_piezo",
     ];
-    let selectedParams = ["humidity", "windspeed", "winddir"];
+
+    let selectedParams = [];
 
     function getRandomParams() {
         const shuffled = fullParams.sort(() => 0.5 - Math.random());
@@ -79,6 +81,6 @@
     section {
         width: calc(20vw - 2px);
         height: calc(50vh - 2px);
-        border: .5px solid yellow;
+        border: 0.5px solid yellow;
     }
 </style>

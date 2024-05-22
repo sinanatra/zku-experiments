@@ -16,11 +16,14 @@
     });
 
     function updateIndex() {
-        if (idx < data.length - 1) {
-            idx += every;
+        // if (idx < data.length - 1) {
+        //     idx += every;
+        //     idx += every;
 
-            setTimeout(updateIndex, 5000);
-        }
+        //     setTimeout(updateIndex, 5000);
+        // }
+        idx =  Math.floor(Math.random() * data.length) + 1
+        setTimeout(updateIndex, 5000);
     }
 </script>
 

@@ -2,7 +2,7 @@
     <span>
         <a href="/">Clouds</a>
         ⎯
-        <a href="/viz">Viz</a>
+        <a href="/viz">whole</a>
         ⎯
         <a href="/daily">daily</a>
     </span>
