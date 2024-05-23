@@ -29,14 +29,14 @@
         container.appendChild(renderer.domElement);
 
         camera = new THREE.PerspectiveCamera();
-        camera.position.set(0, 0, -1000);
+        camera.position.set(0, 0, -100);
 
         controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
         controls.screenSpacePanning = false;
-        controls.minDistance = 10;
-        controls.maxDistance = 200;
+        controls.minDistance = -600;
+        controls.maxDistance = 600;
         controls.maxPolarAngle = Math.PI / 2;
 
         setupScene();
@@ -110,7 +110,7 @@
             const lineMaterial = new THREE.LineBasicMaterial({
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.4,
+                opacity: 0.2,
             });
 
             mesh = new THREE.LineSegments(pointsGeometry, lineMaterial);
