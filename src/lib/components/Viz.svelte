@@ -111,6 +111,8 @@
                 pointsGeometry,
                 new THREE.MeshBasicMaterial({
                     color: "#fefefe",
+                    transparent: true,
+                    opacity: .5,
                     wireframe: true,
                 }),
             );
