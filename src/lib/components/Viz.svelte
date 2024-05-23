@@ -48,7 +48,7 @@
             }
         } else {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color("#222");
+            scene.background = new THREE.Color("#002fa7");
         }
 
         const positions = [];
@@ -67,9 +67,9 @@
                     positions.push(x, y, z);
                     delaunayPoints.push([x, z]);
                     const color = new THREE.Color().setHSL(
-                        0.6,
-                        1,
-                        mapValue(point.z, 0, 50, 0.3, 0.6),
+                        0,
+                        0,
+                        mapValue(point.z, 0, 50, 0, 0.6),
                     );
 
                     colors.push(color.r, color.g, color.b);
@@ -94,7 +94,7 @@
             points = new THREE.Points(
                 pointsGeometry,
                 new THREE.PointsMaterial({
-                    size: 3,
+                    size: 6,
                     // vertexColors: true,
                     sizeAttenuation: true,
                     transparent: true,
