@@ -23,7 +23,8 @@
         const width = container.clientWidth;
         const height = container.clientHeight;
 
-        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer = new THREE.WebGLRenderer({ antialias: false });
+
         renderer.setSize(width, height);
         container.appendChild(renderer.domElement);
 
