@@ -67,7 +67,8 @@
 
     function getRandomParams() {
         const shuffled = fullParams.sort(() => 0.5 - Math.random());
-        selectedParams = shuffled.slice(0, 3);
+        // selectedParams = shuffled.slice(0, 3);
+        selectedParams = [ "runtime", shuffled[0], shuffled[1]];
     }
 
     setInterval(getRandomParams, 2000);
