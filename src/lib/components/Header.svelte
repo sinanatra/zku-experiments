@@ -1,8 +1,8 @@
 <header>
     <span>
-        <a href="/">Clouds</a>
+        <a href="/">Procedural</a>
         ⎯
-        <a href="/viz">whole</a>
+        <a href="/viz">Three</a>
     </span>
 </header>
 
