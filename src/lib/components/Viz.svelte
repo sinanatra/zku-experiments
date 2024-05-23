@@ -67,9 +67,9 @@
                     positions.push(x, y, z);
                     delaunayPoints.push([x, z]);
                     const color = new THREE.Color().setHSL(
-                        mapValue(point.z, 0, 50, 0.4, 0.5),
-                        1,
                         0.6,
+                        1,
+                        mapValue(point.z, 0, 50, 0.3, 0.6),
                     );
 
                     colors.push(color.r, color.g, color.b);
@@ -111,7 +111,7 @@
             const lineMaterial = new THREE.LineBasicMaterial({
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.5,
+                opacity: 0.4,
             });
 
             mesh = new THREE.LineSegments(pointsGeometry, lineMaterial);
