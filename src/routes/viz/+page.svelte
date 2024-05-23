@@ -65,11 +65,6 @@
     ];
     $: selectedParams = [];
 
-    $: console.log(
-        selectedParams,
-        selectedParams.map((d) => selectedParams[0][d]),
-    );
-
     function getRandomParams() {
         const shuffled = fullParams.sort(() => 0.5 - Math.random());
         selectedParams = shuffled.slice(0, 3);

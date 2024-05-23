@@ -108,7 +108,6 @@
                 ? 0.2 * dewpointDensity + 0.8 * humidityDensity
                 : 0.5 * dewpointDensity + 0.5 * humidityDensity;
 
-        // console.log(cloudDensity);
 
         windSpeed = mapValue(datum.windspeed, 0, 50, 0, 1);
         windDirection = datum.winddir;
