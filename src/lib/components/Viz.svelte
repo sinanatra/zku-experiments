@@ -48,7 +48,7 @@
             }
         } else {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color("#002fa7");
+            scene.background = new THREE.Color("blue");
         }
 
         const positions = [];
@@ -94,15 +94,13 @@
             points = new THREE.Points(
                 pointsGeometry,
                 new THREE.PointsMaterial({
-                    size: 6,
-                    // vertexColors: true,
-                    sizeAttenuation: true,
+                    size: 40,
+                    vertexColors: true,
+                    // sizeAttenuation: true,
                     transparent: true,
                     opacity: 1,
-                    map: new THREE.TextureLoader().load(
-                        "https://threejs.org/examples/textures/sprites/circle.png",
-                    ),
-                    alphaTest: 0.5,
+                    map: new THREE.TextureLoader().load("/clouds/cloud_0.png"),
+                    alphaTest: 0.1,
                 }),
             );
 
