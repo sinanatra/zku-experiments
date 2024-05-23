@@ -49,7 +49,7 @@
             }
         } else {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color("darkblue");
+            scene.background = new THREE.Color("blue");
         }
 
         const positions = [];
@@ -95,7 +95,7 @@
             points = new THREE.Points(
                 pointsGeometry,
                 new THREE.PointsMaterial({
-                    size: 60,
+                    size: 30,
                     vertexColors: true,
                     // sizeAttenuation: true,
                     transparent: true,
@@ -108,13 +108,14 @@
             scene.add(points);
 
             const lineMaterial = new THREE.LineBasicMaterial({
-                vertexColors: true,
+                // vertexColors: true,
                 transparent: true,
-                opacity: 0.2,
+                opacity: 0.1,
             });
 
             mesh = new THREE.LineSegments(pointsGeometry, lineMaterial);
             scene.add(mesh);
+
             // mesh = new THREE.Mesh(
             //     pointsGeometry,
             //     new THREE.MeshBasicMaterial({
