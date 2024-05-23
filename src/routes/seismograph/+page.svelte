@@ -7,7 +7,7 @@
     let params = [];
     let maxValues = [];
     let idx = 0;
-    let yVal = 0.5;
+    let yVal = .8;
     let meta = "";
     onMount(async () => {
         const response = await fetch("weather.json");
@@ -42,9 +42,9 @@
                         width,
                     );
 
-                    let h = s.map(i, 0, params.length, 0, 360);
+                    let h = s.map(i, 0, params.length, 0, 240);
                     s.fill(h, 80, 50);
-                    s.rect(normalizedValue, yPosition, 1, yVal);
+                    s.rect(normalizedValue, yPosition, yVal, yVal);
                 });
 
                 idx = (idx + 1) % data.length;
