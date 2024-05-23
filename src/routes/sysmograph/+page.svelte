@@ -27,7 +27,7 @@
 
         s.draw = () => {
             let yPosition = ((idx * yVal) % height) + 20;
-            s.fill(0, 0.6);
+            s.fill(0, 0.3);
             s.noStroke();
             s.rect(0, yPosition, width, yVal);
 

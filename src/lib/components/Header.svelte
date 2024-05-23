@@ -2,7 +2,7 @@
     <span>
         <a href="/">Procedural</a>
         ⎯
-        <a href="/sysmograph">Sysmograph</a>
+        <a href="/seismograph">seismograph</a>
         ⎯
         <a href="/viz">Three</a>
     </span>
