@@ -30,7 +30,7 @@
         camera = new THREE.PerspectiveCamera();
         camera.position.set(0, 0, -1000);
 
-    controls = new OrbitControls(camera, renderer.domElement);
+        controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
         controls.screenSpacePanning = false;
@@ -93,10 +93,18 @@
             points = new THREE.Points(
                 pointsGeometry,
                 new THREE.PointsMaterial({
-                    size: 2,
+                    size: 6,
                     vertexColors: true,
+                    sizeAttenuation: true,
+                    transparent: true,
+                    opacity: 1,
+                    map: new THREE.TextureLoader().load(
+                        "https://threejs.org/examples/textures/sprites/circle.png",
+                    ),
+                    alphaTest: 0.5,
                 }),
             );
+
             scene.add(points);
 
             mesh = new THREE.Mesh(
