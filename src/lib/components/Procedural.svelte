@@ -7,7 +7,7 @@
     export let idx;
     let randomSeed = 0;
     let previdx;
-    let distortion = 0.5; //1.0;
+    let distortion = 1.0; //1.0;
     let amplitude = 0.05;
 
     const sketch = (s) => {
