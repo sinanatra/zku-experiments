@@ -102,7 +102,7 @@
             mesh = new THREE.Mesh(
                 pointsGeometry,
                 new THREE.MeshBasicMaterial({
-                    color: "#ccc",
+                    color: "#fefefe",
                     wireframe: true,
                 }),
             );
