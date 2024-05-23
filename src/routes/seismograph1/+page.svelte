@@ -7,7 +7,7 @@
     let params = [];
     let maxValues = [];
     let idx = 0;
-    let xVal = 0.8;
+    let xVal = 1;
     let meta = "";
     onMount(async () => {
         const response = await fetch("weather.json");
@@ -27,7 +27,7 @@
 
         s.draw = () => {
             let xPosition = (idx * xVal) % width;
-            s.fill(0, 0.3);
+            s.fill(0, 0.8);
             s.noStroke();
             s.rect(xPosition, 0, xVal, height);
 
@@ -43,7 +43,7 @@
                     );
 
                     let h = s.map(i, 0, params.length, 0, 240);
-                    s.fill(h, 80, 50);
+                    s.fill(h, 100, 50);
                     s.rect(xPosition, normalizedValue, xVal, xVal); // Drawing squares horizontally
                 });
 
