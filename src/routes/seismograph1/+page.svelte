@@ -7,7 +7,7 @@
     let params = [];
     let maxValues = [];
     let idx = 0;
-    let xVal = 0.8; // changed from yVal to xVal for horizontal progression
+    let xVal = 0.8;
     let meta = "";
     onMount(async () => {
         const response = await fetch("weather.json");
@@ -26,10 +26,10 @@
         };
 
         s.draw = () => {
-            let xPosition = ((idx * xVal) % width) + 20; // Changed for horizontal progression
+            let xPosition = (idx * xVal) % width;
             s.fill(0, 0.3);
             s.noStroke();
-            s.rect(xPosition, 0, xVal, height); // Clearing horizontally
+            s.rect(xPosition, 0, xVal, height);
 
             if (data.length > 0) {
                 const record = data[idx];
