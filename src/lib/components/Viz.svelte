@@ -95,7 +95,7 @@
             points = new THREE.Points(
                 pointsGeometry,
                 new THREE.PointsMaterial({
-                    size: 40,
+                    size: Math.floor(Math.random() * 60) + 10,
                     vertexColors: true,
                     // sizeAttenuation: true,
                     transparent: true,
