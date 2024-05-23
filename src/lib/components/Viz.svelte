@@ -62,7 +62,7 @@
                 const x = point.x;
                 const y = point.y;
                 const z = point.z;
-                
+
                 if (x && y && z) {
                     positions.push(x, y, z);
                     delaunayPoints.push([x, z]);
@@ -71,6 +71,7 @@
                         1,
                         0.6,
                     );
+
                     colors.push(color.r, color.g, color.b);
                 }
             });
@@ -93,8 +94,8 @@
             points = new THREE.Points(
                 pointsGeometry,
                 new THREE.PointsMaterial({
-                    size: 6,
-                    vertexColors: true,
+                    size: 3,
+                    // vertexColors: true,
                     sizeAttenuation: true,
                     transparent: true,
                     opacity: 1,
@@ -107,16 +108,24 @@
 
             scene.add(points);
 
-            mesh = new THREE.Mesh(
-                pointsGeometry,
-                new THREE.MeshBasicMaterial({
-                    color: "#fefefe",
-                    transparent: true,
-                    opacity: .5,
-                    wireframe: true,
-                }),
-            );
+            const lineMaterial = new THREE.LineBasicMaterial({
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.5,
+            });
+
+            mesh = new THREE.LineSegments(pointsGeometry, lineMaterial);
             scene.add(mesh);
+            // mesh = new THREE.Mesh(
+            //     pointsGeometry,
+            //     new THREE.MeshBasicMaterial({
+            //         color: "#fefefe",
+            //         transparent: true,
+            //         opacity: 0.5,
+            //         wireframe: true,
+            //     }),
+            // );
+            // scene.add(mesh);
 
             const center = new THREE.Vector3();
             pointsGeometry.computeBoundingBox();
