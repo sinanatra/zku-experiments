@@ -49,7 +49,7 @@
             }
         } else {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color("blue");
+            scene.background = new THREE.Color("lightblue");
         }
 
         const positions = [];
