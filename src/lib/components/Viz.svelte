@@ -62,12 +62,12 @@
                 const x = point.x;
                 const y = point.y;
                 const z = point.z;
-
+                
                 if (x && y && z) {
                     positions.push(x, y, z);
                     delaunayPoints.push([x, z]);
                     const color = new THREE.Color().setHSL(
-                        mapValue(point.x, 0, 50, 0.4, 0.5),
+                        mapValue(point.z, 0, 50, 0.4, 0.5),
                         1,
                         0.6,
                     );
