@@ -110,7 +110,7 @@
             const lineMaterial = new THREE.LineBasicMaterial({
                 // vertexColors: true,
                 transparent: true,
-                opacity: 0.1,
+                opacity: 0.2,
             });
 
             mesh = new THREE.LineSegments(pointsGeometry, lineMaterial);
