@@ -2,7 +2,7 @@
     <span>
         <a href="/">Procedural</a>
         ⎯
-        <a href="/seismograph">seismograph</a>
+        <a href="/seismograph1">seismograph</a>
         ⎯
         <a href="/viz">Three</a>
     </span>
@@ -25,6 +25,7 @@
 
     span {
         display: none;
+        background-color: black;
     }
 
     header:hover span {
@@ -36,7 +37,7 @@
     }
 
     a {
-        color: white;
+        color: yellow;
         text-decoration: none;
     }
 </style>
