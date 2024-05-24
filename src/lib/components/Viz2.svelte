@@ -24,19 +24,18 @@
         const height = container.clientHeight;
 
         renderer = new THREE.WebGLRenderer({ antialias: false });
-
         renderer.setSize(width, height);
         container.appendChild(renderer.domElement);
 
         camera = new THREE.PerspectiveCamera();
-        camera.position.set(0, 0, -200);
+        camera.position.set(0, 0, -1000);
 
         controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
         controls.screenSpacePanning = false;
-        controls.minDistance = -600;
-        controls.maxDistance = 600;
+        controls.minDistance = 10;
+        controls.maxDistance = 200;
         controls.maxPolarAngle = Math.PI / 2;
 
         setupScene();
@@ -49,7 +48,7 @@
             }
         } else {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color("black");
+            scene.background = new THREE.Color("#222");
         }
 
         const positions = [];
@@ -68,9 +67,9 @@
                     positions.push(x, y, z);
                     delaunayPoints.push([x, z]);
                     const color = new THREE.Color().setHSL(
-                        0,
-                        0,
-                        mapValue(point.z, 0, 50, 0.2, 0.6),
+                        mapValue(point.z, 0, 50, 0.4, 0.5),
+                        1,
+                        0.6,
                     );
 
                     colors.push(color.r, color.g, color.b);
@@ -95,12 +94,15 @@
             points = new THREE.Points(
                 pointsGeometry,
                 new THREE.PointsMaterial({
-                    size: 20,
+                    size: 10,
                     vertexColors: true,
-                    // sizeAttenuation: true,
+                    sizeAttenuation: true,
                     transparent: true,
                     opacity: 1,
-                    map: new THREE.TextureLoader().load("/clouds/cloud_0.png"),
+                    map: new THREE.TextureLoader().load(
+                        "https://threejs.org/examples/textures/sprites/circle.png",
+                    ),
+                    // map: new THREE.TextureLoader().load("/clouds/cloud_0.png"),
                     alphaTest: 0.5,
                 }),
             );
@@ -110,12 +112,11 @@
             const lineMaterial = new THREE.LineBasicMaterial({
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.1,
+                opacity: 0.5,
             });
 
             mesh = new THREE.LineSegments(pointsGeometry, lineMaterial);
             scene.add(mesh);
-
             // mesh = new THREE.Mesh(
             //     pointsGeometry,
             //     new THREE.MeshBasicMaterial({
