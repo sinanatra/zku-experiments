@@ -29,7 +29,7 @@
         container.appendChild(renderer.domElement);
 
         camera = new THREE.PerspectiveCamera();
-        camera.position.set(0, 0, -100);
+        camera.position.set(0, 0, -200);
 
         controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
@@ -70,7 +70,7 @@
                     const color = new THREE.Color().setHSL(
                         0,
                         0,
-                        mapValue(point.z, 0, 50, 0, 0.6),
+                        mapValue(point.z, 0, 50, 0.2, 0.6),
                     );
 
                     colors.push(color.r, color.g, color.b);
@@ -95,22 +95,22 @@
             points = new THREE.Points(
                 pointsGeometry,
                 new THREE.PointsMaterial({
-                    size: 30,
+                    size: 40,
                     vertexColors: true,
                     // sizeAttenuation: true,
                     transparent: true,
                     opacity: 1,
                     map: new THREE.TextureLoader().load("/clouds/cloud_0.png"),
-                    alphaTest: 0.1,
+                    alphaTest: 0.3,
                 }),
             );
 
             scene.add(points);
 
             const lineMaterial = new THREE.LineBasicMaterial({
-                // vertexColors: true,
+                vertexColors: true,
                 transparent: true,
-                opacity: 0.2,
+                opacity: 0.1,
             });
 
             mesh = new THREE.LineSegments(pointsGeometry, lineMaterial);
