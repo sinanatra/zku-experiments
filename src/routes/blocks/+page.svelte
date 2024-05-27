@@ -9,7 +9,7 @@
     let meta = "";
     let flowField = [];
     let cols, rows;
-    let colWidth; // Define colWidth in the global scope
+    let colWidth;
     const resolution = 20;
 
     onMount(async () => {
@@ -26,8 +26,8 @@
             s.createCanvas(width, height);
             s.colorMode(s.HSL);
             s.background(255);
-            cols = params.length; // Set columns based on the number of parameters
-            colWidth = s.width / cols; // Dynamically calculate the column width
+            cols = params.length;
+            colWidth = s.width / cols;
             rows = s.floor(height / resolution);
             initializeFlowField(s);
         };
