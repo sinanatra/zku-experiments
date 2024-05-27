@@ -1,8 +1,12 @@
 <header>
     <span>
-        <a href="/">Procedural</a>
+        <a href="/">Clouds</a>
         ⎯
-        <a href="/seismograph1">seismograph</a>
+        <a href="/seismograph1">Seismograph</a>
+        ⎯
+        <a href="/lines">Lines</a>
+        ⎯
+        <a href="/blocks">Blocks</a>
         ⎯
         <a href="/viz">Three</a>
     </span>

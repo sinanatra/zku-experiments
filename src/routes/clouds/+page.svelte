@@ -1,5 +1,5 @@
 <script>
-    import Procedural from "@components/Procedural.svelte";
+    import Procedural_old from "@components/Procedural_old.svelte";
     import { onMount } from "svelte";
     let idx = 0;
     let every = 60;
@@ -23,7 +23,7 @@
         //     setTimeout(updateIndex, 5000);
         // }
         idx =  Math.floor(Math.random() * data.length) + 1
-        setTimeout(updateIndex, 1000);
+        setTimeout(updateIndex, 2000);
     }
 </script>
 
@@ -48,7 +48,7 @@
 <article>
     {#if data.length > 0}
         <section>
-            <Procedural {idx} {data} />
+            <Procedural_old {idx} {data} />
         </section>
         <p>
             {metadata}

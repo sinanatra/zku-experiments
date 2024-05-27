@@ -7,8 +7,9 @@
     let params = [];
     let maxValues = [];
     let idx = 0;
-    let xVal = 1;
+    let point = 1;
     let meta = "";
+
     onMount(async () => {
         const response = await fetch("weather.json");
         data = await response.json();
@@ -23,13 +24,16 @@
             s.createCanvas(width, height);
             s.colorMode(s.HSL);
             s.background(0);
+            // s.pixelDensity(1); // debugging
         };
 
         s.draw = () => {
-            let xPosition = (idx * xVal) % width;
-            s.fill(0, 0.8);
+            let xPosition = (idx * point) % width;
+            // s.fill("yellow");
+            // s.rect(xPosition, 0, point + 3, height);
+            s.fill(0, 0.3);
             s.noStroke();
-            s.rect(xPosition, 0, xVal, height);
+            s.rect(xPosition, 0, point + 2, height);
 
             if (data.length > 0) {
                 const record = data[idx];
@@ -39,16 +43,19 @@
                         0,
                         maxValues[i],
                         0,
-                        height, // Swapped from width to height for vertical mapping
+                        height,
                     );
 
-                    let h = s.map(i, 0, params.length, 0, 240);
+                    let h = s.map(i, 0, params.length, 0, 360);
                     s.fill(h, 100, 50);
-                    s.rect(xPosition, normalizedValue, xVal, xVal); // Drawing squares horizontally
+
+                    s.fill(0, 100, 100);
+
+                    s.rect(xPosition, normalizedValue, point, point);
                 });
 
                 idx = (idx + 1) % data.length;
-                meta = data[idx].time;
+                meta = record.time;
             }
         };
     };
