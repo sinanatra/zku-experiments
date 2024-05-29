@@ -2,7 +2,7 @@
     <span>
         <a href="/">Clouds</a>
         ⎯
-        <a href="/seismograph1">Seismograph</a>
+        <a href="/seismograph">Seismograph</a>
         ⎯
         <a href="/lines">Lines</a>
         ⎯

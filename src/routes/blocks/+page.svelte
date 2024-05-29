@@ -10,7 +10,7 @@
     let flowField = [];
     let cols, rows;
     let colWidth;
-    const resolution = 20;
+    const resolution = 10;
 
     onMount(async () => {
         const response = await fetch("weather.json");
@@ -33,7 +33,7 @@
         };
 
         s.draw = () => {
-            s.background(255, 0.01);
+            s.background(255, 0.1);
 
             if (data.length > 0) {
                 const rowIdx = s.frameCount % rows;
@@ -57,7 +57,8 @@
         function updateFlowField(s, rowIdx) {
             if (data.length > 0) {
                 let idx = s.frameCount % data.length;
-                const record = data[idx];
+
+                let record = data[idx];
 
                 for (let col = 0; col < cols; col++) {
                     let normalizedValue = s.map(

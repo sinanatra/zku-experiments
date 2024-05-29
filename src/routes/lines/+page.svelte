@@ -13,13 +13,13 @@
     let nr1 = 0;
     let inc = 0.0;
     let rand = 0;
-    let columnWidth = 100;
+    let columnWidth = 80;
     let yPosition = columnWidth;
     let xPosition = columnWidth;
     let jump = false;
 
     onMount(async () => {
-        const response = await fetch("weather.json");
+        const response = await fetch("sept.json");
         data = await response.json();
         params = Object.keys(data[0]).filter(
             (key) => typeof data[0][key] === "number",
@@ -87,13 +87,15 @@
         };
 
         s.draw = () => {
+            // s.background(255, 5);
+            // s.frameRate(2);
             const record = data[idx];
 
             let param = s.map(record[params[nr]], 0, columnWidth, 10, 50) || 1;
             let param1 = s.map(record[params[nr]], 0, columnWidth, 1, 10) || 1;
 
             s.stroke("black");
-            s.strokeWeight(1);
+            s.strokeWeight(1.5);
 
             s.line(
                 xPosition + rand,
@@ -120,7 +122,7 @@
                 s.background(255);
             }
 
-            idx = (idx + 1) % data.length;
+            idx = (idx + 10) % data.length;
             meta =
                 `${record.time} , ${params[nr]}, ${params[nr1]}, ${record.runtime}` ||
                 meta;

@@ -7,8 +7,11 @@
     export let idx;
     let randomSeed = 0;
     let previdx;
-    let distortion = 1.0; //1.0;
-    let amplitude = 0.05;
+    let distortion = 3.0; //1.0;
+    let amplitude = 0.01;
+    let amplitudeMult = 1.1;
+    let sat = 0.5;
+    let selected = "abstract";
 
     const sketch = (s) => {
         let myShader;
@@ -35,7 +38,7 @@
                     ? 0.1
                     : s.map(data[idx].solarradiation, 1, 300, 0.5, 1.0);
 
-            const wind = s.map(data[idx].windspeed, 0, 60, 0.01, 2);
+            const wind = s.map(data[idx].windspeed, 0, 60, 0.1, 3);
 
             const windDirection = (data[idx].winddir + 180) % 360;
             const windVector = [s.cos(windDirection), s.sin(windDirection)];
@@ -47,7 +50,19 @@
 
             // const timeOfDay = new Date(data[idx].time).getHours();
             // const hueAdjustment = s.map(timeOfDay, 0, 23, -10, 0);
-            const tempHue = 213 / 360;
+            let tempHue = 0 / 360;
+            if (selected == "accurate") {
+                distortion = 1.0; //1.0;
+                amplitude = 0.05;
+                amplitudeMult = 0.4;
+                sat = 0.0;
+                tempHue = 213 / 360;
+            } else {
+                distortion = 3.0; //1.0;
+                amplitude = 0.01;
+                sat = 0.8;
+                amplitudeMult = 1.1;
+            }
 
             myShader.setUniform("iResolution", [width, height]);
             myShader.setUniform("windVector", windVector);
@@ -64,6 +79,8 @@
 
             myShader.setUniform("distortion", distortion);
             myShader.setUniform("iAmplitude", amplitude);
+            myShader.setUniform("amplitudeMult", amplitudeMult);
+            myShader.setUniform("s", sat);
 
             // draw
             s.fill(255);
@@ -101,6 +118,8 @@
     uniform float skyDarkness;
     uniform float distortion;
     uniform float iAmplitude;
+    uniform float amplitudeMult;
+    uniform float s;
 
     uniform float cloudscale;
     uniform float speed;
@@ -135,12 +154,12 @@
     }
 
     float fbm(vec2 n) {
-        float nr = distortion; // test, def is 1.0
-        float total = 0.0, amplitude = iAmplitude; // test higher original is 0.1
+        float nr = distortion; 
+        float total = 0.0, amplitude = iAmplitude; 
         for (int i = 0; i < 7; i++) {
             total += noise(n) * amplitude;
             n = m * n * nr;
-            amplitude *= 0.4;
+            amplitude *= amplitudeMult;
         }
         return total;
     }
@@ -195,30 +214,30 @@
         f *= r + f;
 
         float c = 0.0;
-        time = iTime * speed * 2.0;
-        uv = p * vec2(iResolution.x / iResolution.y, 1.0);
-        uv *= cloudscale * 2.0;
-        uv -= q - time * windVector;
-        weight = 0.4;
-        for (int i = 0; i < 7; i++) {
-            c += weight * noise(uv);
-            uv = m * uv + time * windVector;
-            weight *= 0.6;
-        }
+        // time = iTime * speed * 2.0;
+        // uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        // uv *= cloudscale * 2.0;
+        // uv -= q - time * windVector;
+        // weight = 0.4;
+        // for (int i = 0; i < 7; i++) {
+        //     c += weight * noise(uv);
+        //     uv = m * uv + time * windVector;
+        //     weight *= 0.6;
+        // }
 
         float c1 = 0.0;
-        time = iTime * speed * 3.0;
-        uv = p * vec2(iResolution.x / iResolution.y, 1.0);
-        uv *= cloudscale * 3.0;
-        uv -= q - time * windVector;
-        weight = 0.4;
-        for (int i = 0; i < 7; i++) {
-            c1 += abs(weight * noise(uv));
-            uv = m * uv + time * windVector;
-            weight *= 0.6;
-        }
+        // time = iTime * speed * 3.0;
+        // uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        // uv *= cloudscale * 1.0;
+        // uv -= q - time * windVector;
+        // weight = 0.4;
+        // for (int i = 0; i < 7; i++) {
+        //     c1 += abs(weight * noise(uv));
+        //     uv = m * uv + time * windVector;
+        //     weight *= 0.6;
+        // }
 
-        c += c1;
+        // c += c1;
 
         vec3 skycolour1 = getHSB(skyDarkness, 0.8, solar);
         vec3 skycolour2 = getHSB(skyDarkness, 0.6, solar + 0.3);
@@ -229,7 +248,7 @@
 
         f = cloudcover + cloudalpha * f * r;
 
-        vec3 result = mix(skycolour, clamp(skytint * skycolour + cloudcolour, 0.0, 1.0), clamp(f + c, 0.0, 1.0));
+        vec3 result = mix(skycolour, clamp(skytint * skycolour + cloudcolour, s, 0.9), clamp(f + c, 0.0, 1.0));
 
         fragColor = vec4(result, 1.0);
     }
@@ -254,24 +273,14 @@
         if (windDir >= 247.5 && windDir < 292.5) return "←"; // West
         if (windDir >= 292.5 && windDir < 337.5) return "↖"; // Northwest
     }
+    function onChange(event) {
+        selected = event.currentTarget.value;
+    }
 </script>
 
 {#if data[idx].length == 0}
     <article>Loading...</article>
 {:else}
-    <!-- Distortion:
-    <input
-        type="number"
-        bind:value={distortion}
-        min="1.0"
-        max="30000"
-        step="0.1"
-    />
-    Amplitude:
-    <input type="number" bind:value={amplitude} min="0.0" max="5" step="0.01" /> -->
-    <section bind:clientWidth={width} bind:clientHeight={height}>
-        <P5 {sketch} />
-    </section>
     <div class="metadata">
         <span>
             {new Date(data[idx].time).toLocaleString()}
@@ -292,6 +301,27 @@
             winddir: {data[idx].winddir}
         </span>
     </div>
+    <section bind:clientWidth={width} bind:clientHeight={height}>
+        <P5 {sketch} />
+    </section>
+    <label>
+        <input
+            checked={selected === "abstract"}
+            on:change={onChange}
+            type="radio"
+            name="layout"
+            value="abstract"
+        /> Abstract
+    </label>
+    <label>
+        <input
+            checked={selected === "accurate"}
+            on:change={onChange}
+            type="radio"
+            name="layout"
+            value="accurate"
+        /> Accurate
+    </label>
 {/if}
 
 <style>
@@ -300,11 +330,8 @@
     }
 
     .metadata {
-        position: absolute;
-        bottom: 0;
-        font-size: 20px;
-        padding: 5px;
-        color: black;
+        background-color: black;
+        color: white;
     }
     .metadata span:first-of-type {
         color: yellow;

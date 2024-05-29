@@ -7,8 +7,9 @@
     let params = [];
     let maxValues = [];
     let idx = 0;
-    let yVal = .8;
+    let point = 1;
     let meta = "";
+
     onMount(async () => {
         const response = await fetch("weather.json");
         data = await response.json();
@@ -23,13 +24,16 @@
             s.createCanvas(width, height);
             s.colorMode(s.HSL);
             s.background(0);
+            // s.pixelDensity(1); // debugging
         };
 
         s.draw = () => {
-            let yPosition = ((idx * yVal) % height) + 20;
+            let xPosition = (idx * point) % width;
+            // s.fill("yellow");
+            // s.rect(xPosition, 0, point + 3, height);
             s.fill(0, 0.3);
             s.noStroke();
-            s.rect(0, yPosition, width, yVal);
+            s.rect(xPosition, 0, point + 2, height);
 
             if (data.length > 0) {
                 const record = data[idx];
@@ -39,16 +43,19 @@
                         0,
                         maxValues[i],
                         0,
-                        width,
+                        height,
                     );
 
-                    let h = s.map(i, 0, params.length, 0, 240);
-                    s.fill(h, 80, 50);
-                    s.rect(normalizedValue, yPosition, yVal, yVal);
+                    let h = s.map(i, 0, params.length, 0, 360);
+                    s.fill(h, 100, 50);
+
+                    s.fill(0, 100, 100);
+
+                    s.rect(xPosition, normalizedValue, point, point);
                 });
 
                 idx = (idx + 1) % data.length;
-                meta = data[idx].time;
+                meta = record.time;
             }
         };
     };
@@ -61,7 +68,7 @@
 {#if data.length === 0}
     <article>Loading...</article>
 {:else}
-    {meta}
+    <div>{meta}</div>
     <article bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
     </article>
