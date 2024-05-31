@@ -33,7 +33,7 @@
         };
 
         s.draw = () => {
-            s.background(255, 0.1);
+            s.background(255, 0.02);
 
             if (data.length > 0) {
                 const rowIdx = s.frameCount % rows;
