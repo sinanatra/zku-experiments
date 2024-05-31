@@ -273,9 +273,9 @@
         if (windDir >= 247.5 && windDir < 292.5) return "←"; // West
         if (windDir >= 292.5 && windDir < 337.5) return "↖"; // Northwest
     }
-    function onChange(event) {
-        selected = event.currentTarget.value;
-    }
+function onChange(event) {
+    selected = event.currentTarget.value;
+}
 </script>
 
 {#if data[idx].length == 0}
