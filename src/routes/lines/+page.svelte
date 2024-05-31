@@ -2,7 +2,6 @@
     import P5 from "p5-svelte";
     import { onMount } from "svelte";
 
-    let selected = "accurate";
     let width, height;
     let data = [];
     let params = [];
@@ -19,12 +18,11 @@
     let columnWidth = 80;
     let yPosition = columnWidth;
     let xPosition = columnWidth;
-    let jump = false;
-    let previousX2 = xPosition;
-    let previousY2 = yPosition;
+    let previousX2;
+    let previousY2;
 
     onMount(async () => {
-        const response = await fetch("sept.json");
+        const response = await fetch("weather.json");
         data = await response.json();
         params = Object.keys(data[0]).filter(
             (key) => typeof data[0][key] === "number",
@@ -79,7 +77,6 @@
 
         const delays = [100, 200, 500, 1000, 2000, 3000];
         const randomDelay = delays[Math.floor(Math.random() * delays.length)];
-        jump = true;
         // setTimeout(getRandomParams, randomDelay);
     }
 
@@ -97,46 +94,36 @@
             const record = data[idx];
 
             let param = s.map(record[params[nr]], 0, columnWidth, 10, 60) || 1;
-            let param1 = s.map(record[params[nr]], 0, columnWidth, 10, 60) || 1;
+            let param1 = s.map(record[params[nr]], 0, columnWidth, 40, 60) || 1;
 
             s.strokeWeight(1);
-            let x1, y1, x2, y2;
-
-            if (selected == "waves") {
-                x1 = xPosition + rand;
-                y1 = yPosition + param;
-                x2 = xPosition + rand + param1 + s.noise(inc) * 100;
-                y2 = yPosition;
-                s.line(x1, y1, x2, y2);
-            } else {
-                x1 = xPosition + param;
-                y1 = previousY2 - param1 + s.noise(inc) * 60;
-                x2 = previousX2 + param + s.noise(inc) * 20;
-                y2 = yPosition + param1;
-
+            
+            let x1 = xPosition + param;
+            let y1 = previousY2 - param1 + s.noise(inc) * 60;
+            let x2 = previousX2 + param + s.noise(inc) * 20;
+            let y2 = yPosition + param1;
+            
+            if(previousX2 && previousY2){
                 s.line(x1, y1, x2, y2);
             }
-
+            
             inc += 0.02;
             yPosition += point;
             previousX2 = x1;
             previousY2 = y2
-
-            if (jump) {
-                jump = false;
-            }
-            
-            if (yPosition + s.random(10, columnWidth) > height) {
+          
+            if (yPosition + s.random(10, columnWidth) >= height) {
                 xPosition += columnWidth + 10;
-                previousX2 = xPosition;
                 yPosition = s.random(10, columnWidth);
-                previousY2 = yPosition;
+                previousX2 = NaN;
+                previousY2 = NaN;
             }
 
-            if (xPosition > width) {
+            if (xPosition + columnWidth >= width) {
                 xPosition = columnWidth;
-                previousY2  = xPosition;
                 yPosition = s.random(10, columnWidth);
+                previousX2 = NaN;
+                previousY2 = NaN;
                 s.background(255);
             }
 
@@ -148,9 +135,6 @@
         };
     };
 
-    function onChange(event) {
-        selected = event.currentTarget.value;
-    }
     function onClick(event) {
         getRandomParams();
     }
@@ -163,24 +147,6 @@
     <article bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
     </article>
-    <label>
-        <input
-            checked={selected === "waves"}
-            on:change={onChange}
-            type="radio"
-            name="layout"
-            value="waves"
-        /> Waves
-    </label>
-    <label>
-        <input
-            checked={selected === "accurate"}
-            on:change={onChange}
-            type="radio"
-            name="layout"
-            value="accurate"
-        /> Accurate
-    </label>
     <label>
         <button on:click={onClick}> Change </button>
     </label>

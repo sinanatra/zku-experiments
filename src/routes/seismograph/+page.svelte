@@ -28,12 +28,12 @@
         };
 
         s.draw = () => {
-            let xPosition = (idx * point) % width;
+            let yPosition = (idx * point) % height;
             // s.fill("yellow");
-            // s.rect(xPosition, 0, point + 3, height);
+            // s.rect(0, yPosition, width, point + 3);
             s.fill(0, 0.3);
             s.noStroke();
-            s.rect(xPosition, 0, point + 2, height);
+            s.rect(0, yPosition, width, point + 2);
 
             if (data.length > 0) {
                 const record = data[idx];
@@ -43,15 +43,15 @@
                         0,
                         maxValues[i],
                         0,
-                        height,
+                        width,
                     );
 
                     let h = s.map(i, 0, params.length, 0, 360);
-                    s.fill(h, 100, 50);
+                    s.fill(h, 50, 90);
 
-                    s.fill(0, 100, 100);
+                    // s.fill(0, 100, 100);
 
-                    s.rect(xPosition, normalizedValue, point, point);
+                    s.rect(normalizedValue, yPosition, point, point);
                 });
 
                 idx = (idx + 1) % data.length;
