@@ -2,10 +2,13 @@
     import P5 from "p5-svelte";
     import { onMount } from "svelte";
 
+    let selected = "accurate";
     let width, height;
     let data = [];
     let params = [];
     let idx = 0;
+    let every = 10;
+
     let point = 2;
     let meta = "";
 
@@ -17,6 +20,8 @@
     let yPosition = columnWidth;
     let xPosition = columnWidth;
     let jump = false;
+    let previousX2 = xPosition;
+    let previousY2 = yPosition;
 
     onMount(async () => {
         const response = await fetch("sept.json");
@@ -64,7 +69,7 @@
             };
         });
 
-        // getRandomParams();
+        getRandomParams();
     });
 
     function getRandomParams() {
@@ -75,10 +80,10 @@
         const delays = [100, 200, 500, 1000, 2000, 3000];
         const randomDelay = delays[Math.floor(Math.random() * delays.length)];
         jump = true;
-        setTimeout(getRandomParams, randomDelay);
+        // setTimeout(getRandomParams, randomDelay);
     }
 
-    getRandomParams();
+    // getRandomParams();
 
     const sketch = (s) => {
         s.setup = () => {
@@ -91,43 +96,64 @@
             // s.frameRate(2);
             const record = data[idx];
 
-            let param = s.map(record[params[nr]], 0, columnWidth, 10, 50) || 1;
-            let param1 = s.map(record[params[nr]], 0, columnWidth, 1, 10) || 1;
+            let param = s.map(record[params[nr]], 0, columnWidth, 10, 60) || 1;
+            let param1 = s.map(record[params[nr]], 0, columnWidth, 10, 60) || 1;
 
-            s.stroke("black");
-            s.strokeWeight(1.5);
+            s.strokeWeight(1);
+            let x1, y1, x2, y2;
 
-            s.line(
-                xPosition + rand,
-                yPosition + param,
-                xPosition + rand + param1 + s.noise(inc) * 100,
-                yPosition,
-            );
+            if (selected == "waves") {
+                x1 = xPosition + rand;
+                y1 = yPosition + param;
+                x2 = xPosition + rand + param1 + s.noise(inc) * 100;
+                y2 = yPosition;
+                s.line(x1, y1, x2, y2);
+            } else {
+                x1 = xPosition + param;
+                y1 = previousY2 - param1 + s.noise(inc) * 60;
+                x2 = previousX2 + param + s.noise(inc) * 20;
+                y2 = yPosition + param1;
+
+                s.line(x1, y1, x2, y2);
+            }
 
             inc += 0.02;
             yPosition += point;
+            previousX2 = x1;
+            previousY2 = y2
 
             if (jump) {
                 jump = false;
             }
-
+            
             if (yPosition + s.random(10, columnWidth) > height) {
                 xPosition += columnWidth + 10;
+                previousX2 = xPosition;
                 yPosition = s.random(10, columnWidth);
+                previousY2 = yPosition;
             }
 
             if (xPosition > width) {
                 xPosition = columnWidth;
+                previousY2  = xPosition;
                 yPosition = s.random(10, columnWidth);
                 s.background(255);
             }
 
-            idx = (idx + 10) % data.length;
+            idx = (idx + every) % data.length;
             meta =
                 `${record.time} , ${params[nr]}, ${params[nr1]}, ${record.runtime}` ||
                 meta;
+
         };
     };
+
+    function onChange(event) {
+        selected = event.currentTarget.value;
+    }
+    function onClick(event) {
+        getRandomParams();
+    }
 </script>
 
 {#if data.length === 0}
@@ -137,6 +163,30 @@
     <article bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
     </article>
+    <label>
+        <input
+            checked={selected === "waves"}
+            on:change={onChange}
+            type="radio"
+            name="layout"
+            value="waves"
+        /> Waves
+    </label>
+    <label>
+        <input
+            checked={selected === "accurate"}
+            on:change={onChange}
+            type="radio"
+            name="layout"
+            value="accurate"
+        /> Accurate
+    </label>
+    <label>
+        <button on:click={onClick}> Change </button>
+    </label>
+    <label>
+        <input type="number" bind:value={every} min="0" max="{data.length}" />
+    </label>
 {/if}
 
 <style>
