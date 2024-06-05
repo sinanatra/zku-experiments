@@ -47,9 +47,10 @@
                     );
 
                     let h = s.map(i, 0, params.length, 0, 360);
-                    s.fill(h, 50, 90);
+                    s.fill(h, 100, 50);
 
-                    // s.fill(0, 100, 100);
+                    s.fill(0, 100, 100);
+                    s.fill("yellow");
 
                     s.rect(normalizedValue, yPosition, point, point);
                 });
