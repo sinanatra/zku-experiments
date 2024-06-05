@@ -2,13 +2,13 @@
     <span>
         <a href="/">Clouds</a>
         ⎯
-        <a href="/seismograph">Seismograph</a>
+        <a href="/page_1">Seismograph</a>
         ⎯
-        <a href="/lines">Lines</a>
+        <a href="/page_2">Lines</a>
         ⎯
-        <a href="/blocks">Blocks</a>
+        <a href="/page_3">Blocks</a>
         ⎯
-        <a href="/viz">Three</a>
+        <a href="/page_4">Three</a>
     </span>
 </header>
 
