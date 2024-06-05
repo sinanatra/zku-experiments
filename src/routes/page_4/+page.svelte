@@ -1,5 +1,5 @@
 <script>
-    import Viz from "@components/Viz.svelte";
+    import ThreeD from "@components/ThreeD.svelte";
     import { onMount } from "svelte";
 
     let data = [];
@@ -101,7 +101,7 @@
 <article>
     {#if splitData.length > 0}
         <section>
-            <Viz data={splitData} {selectedParams} />
+            <ThreeD data={splitData} {selectedParams} />
         </section>
     {/if}
 </article>

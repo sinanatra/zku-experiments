@@ -46,7 +46,7 @@
                         width,
                     );
 
-                    let h = s.map(i, 0, params.length, 20, 70); // yellows 360 for all
+                    let h = s.map(i, 0, params.length, 0, 70); // yellows 360 for all
                     s.fill(h, 100, 50);
                     s.rect(normalizedValue, yPosition, point, point);
                 });

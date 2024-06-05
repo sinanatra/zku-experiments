@@ -1,12 +1,10 @@
 <script>
-    import Procedural from "@components/Procedural.svelte";
+    import Clouds from "@components/Clouds.svelte";
     import { onMount } from "svelte";
     let idx = 0;
-    let every = 60;
+    let every = 1;
 
     let data = [];
-    let images = [];
-    let metadata = "";
     onMount(async () => {
         const response = await fetch("weather.json");
         data = await response.json();
@@ -16,13 +14,13 @@
     });
 
     function updateIndex() {
-        // if (idx < data.length - 1) {
-        //     idx += every;
-        //     idx += every;
+        if (idx < data.length - 1) {
+            idx += every;
+            idx += every;
 
-        //     setTimeout(updateIndex, 5000);
-        // }
-        idx =  Math.floor(Math.random() * data.length) + 1
+            // setTimeout(updateIndex, 1000);
+        }
+        // idx =  Math.floor(Math.random() * data.length) + 1
         setTimeout(updateIndex, 60000);
     }
 </script>
@@ -48,20 +46,16 @@
 <article>
     {#if data.length > 0}
         <section>
-            <Procedural {idx} {data} />
+            <Clouds {idx} {data} />
         </section>
-        <p>
-            {metadata}
-        </p>
     {/if}
 </article>
 
 <style>
     article {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        /* display: flex; */
         width: 100%;
+        height: 100vh;
     }
 
     section {
