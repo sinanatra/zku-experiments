@@ -105,7 +105,7 @@
             type="radio"
             name="layout"
             value="false"
-        /> false
+        /> No interference
     </label>
     <label>
         <input
@@ -114,7 +114,7 @@
             type="radio"
             name="layout"
             value="true"
-        /> true
+        /> With interference
     </label>
 {/if}
 
