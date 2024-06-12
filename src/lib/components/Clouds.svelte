@@ -247,7 +247,7 @@
         c += c1;
 
         vec3 skycolour1 = getHSB(skyDarkness, 0.8, solar);
-        vec3 skycolour2 = getHSB(skyDarkness, 0.6, solar + 0.3);
+        vec3 skycolour2 = skycolour1; // getHSB(skyDarkness, 0.6, solar + 0.3);
         vec3 skycolour = mix(skycolour2, skycolour1, clamp(p.y, 0.0, 1.0));
 
         skycolour = skycolour * skyDarkness;
@@ -267,20 +267,6 @@
 
     `;
 
-    function directionToArrow(windDir) {
-        if (
-            (windDir >= 337.5 && windDir <= 360) ||
-            (windDir >= 0 && windDir < 22.5)
-        )
-            return "↑"; // North
-        if (windDir >= 22.5 && windDir < 67.5) return "↗"; // Northeast
-        if (windDir >= 67.5 && windDir < 112.5) return "→"; // East
-        if (windDir >= 112.5 && windDir < 157.5) return "↘"; // Southeast
-        if (windDir >= 157.5 && windDir < 202.5) return "↓"; // South
-        if (windDir >= 202.5 && windDir < 247.5) return "↙"; // Southwest
-        if (windDir >= 247.5 && windDir < 292.5) return "←"; // West
-        if (windDir >= 292.5 && windDir < 337.5) return "↖"; // Northwest
-    }
     function onChange(event) {
         selected = event.currentTarget.value;
     }
