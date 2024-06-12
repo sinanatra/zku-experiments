@@ -97,9 +97,9 @@
 
             const record = data[idx];
 
-            let param = s.map(record[params[nr]], 0, columnWidth, 10, 60) || 1;
-            let param1 = s.map(record[params[nr]], 0, columnWidth, 40, 60) || 1;
-            let signal = s.map(signals[signalIdx], -100, -60, 40, 60) || 1;
+            let param = s.map(record[params[nr]], 0, columnWidth, 10, 20) || 1;
+            let param1 = s.map(record[params[nr]], 0, columnWidth, 10, 20) || 1;
+            let signal = s.map(signals[signalIdx], -100, -60, 10, 20) || 1;
 
             s.strokeWeight(1.2);
 
