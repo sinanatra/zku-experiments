@@ -3,9 +3,9 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview"
+		"dev": "concurrently \"npm run dev:svelte\" \"npm run dev:proxy\"",
+		"dev:svelte": "vite dev",
+		"dev:proxy": "node proxy.js"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
@@ -16,10 +16,13 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"axios": "^1.7.2",
+		"concurrently": "^8.2.2",
 		"d3": "^7.9.0",
 		"d3-force-3d": "^3.0.5",
 		"delaunator": "^5.0.1",
 		"delaunay-triangulate": "^1.1.6",
+		"express": "^4.19.2",
 		"ml": "^6.0.0",
 		"p5-svelte": "^3.1.2",
 		"simplex-noise": "^4.0.1",

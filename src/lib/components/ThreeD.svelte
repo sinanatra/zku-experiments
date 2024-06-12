@@ -49,7 +49,7 @@
             }
         } else {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color("black");
+            scene.background = new THREE.Color("white");
         }
 
         const positions = [];
@@ -110,7 +110,7 @@
             const lineMaterial = new THREE.LineBasicMaterial({
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.1,
+                opacity: 0.3,
             });
 
             mesh = new THREE.LineSegments(pointsGeometry, lineMaterial);

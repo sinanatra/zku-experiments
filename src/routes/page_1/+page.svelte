@@ -4,18 +4,26 @@
 
     let width, height;
     let data = [];
+    let signals = [];
     let params = [];
     let maxValues = [];
     let idx = 0;
     let point = 1;
     let meta = "";
+    let nr;
+    let interference = false;
 
     onMount(async () => {
-        const response = await fetch("weather.json");
+        const response = await fetch("http://localhost:3000/api/weather");
         data = await response.json();
         params = Object.keys(data[0]).filter(
             (key) => typeof data[0][key] === "number",
         );
+
+        const signalResponse = await fetch("http://localhost:3000/api/signal");
+        const sigData = await signalResponse.json();
+        signals = sigData.map((d) => d.signal);
+        nr = Math.floor(Math.random() * params.length);
         maxValues = params.map((param) => getMaxValue(param));
     });
 
@@ -24,30 +32,47 @@
             s.createCanvas(width, height);
             s.colorMode(s.HSL);
             s.background(0);
-            // s.pixelDensity(1); // debugging
         };
 
         s.draw = () => {
             let yPosition = (idx * point) % height;
-            // s.fill("yellow");
-            // s.rect(0, yPosition, width, point + 3);
-            s.fill(0, 0.3);
+            if (yPosition == 0) {
+                nr = Math.floor(Math.random() * params.length) % height;
+            }
+
+            s.fill("yellow");
+            s.rect(0, yPosition, width, point + 3);
+            s.fill(0);
             s.noStroke();
             s.rect(0, yPosition, width, point + 2);
 
             if (data.length > 0) {
                 const record = data[idx];
+                const sig = signals[idx];
+                let test = [params[nr]];
                 params.forEach((param, i) => {
                     let normalizedValue = s.map(
-                        record[param],
+                        record[test], //param
                         0,
                         maxValues[i],
                         0,
                         width,
                     );
 
-                    let h = s.map(i, 0, params.length, 0, 70); // yellows 360 for all
-                    s.fill(h, 100, 50);
+                    if (interference && signals.length > 0) {
+                        let normalizedSignal = s.map(
+                            sig,
+                            -80,
+                            -70,
+                            0,
+                            width / 2,
+                        );
+                        s.fill("red");
+                        s.rect(normalizedSignal, yPosition, point, point);
+                        normalizedValue += normalizedSignal;
+                    }
+
+                    s.fill(0, 100, 100);
                     s.rect(normalizedValue, yPosition, point, point);
                 });
 
@@ -60,15 +85,37 @@
     function getMaxValue(param) {
         return Math.max(...data.map((d) => d[param]));
     }
+
+    function onChange(event) {
+        interference = event.currentTarget.value === "true";
+    }
 </script>
 
-{#if data.length === 0}
+{#if data.length === 0 && signals.length === 0}
     <article>Loading...</article>
 {:else}
     <div>{meta}</div>
     <article bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
     </article>
+    <label>
+        <input
+            checked={!interference}
+            on:change={onChange}
+            type="radio"
+            name="layout"
+            value="false"
+        /> false
+    </label>
+    <label>
+        <input
+            checked={interference}
+            on:change={onChange}
+            type="radio"
+            name="layout"
+            value="true"
+        /> true
+    </label>
 {/if}
 
 <style>
@@ -78,9 +125,8 @@
     }
     article {
         font-family: sans-serif;
-        background-color: black;
-        color: white;
         display: flex;
         min-height: 100vh;
+        background-color: black;
     }
 </style>

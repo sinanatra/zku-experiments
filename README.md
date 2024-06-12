@@ -23,3 +23,14 @@ npm run build
 ```
 
 You can preview the production build with `npm run preview`.
+
+
+### Data
+
+The dataset used are:
+
+Weather: https://weather.hiveeyes.org/api/climart/zku/weatherstation/main/data.json?from=now-5h&to=now
+
+
+Wifi Signal Strength: https://weather.hiveeyes.org/api/umwelt/openbeeresearch/luftdaten/airrohr-01/data.json?from=now-5d
+

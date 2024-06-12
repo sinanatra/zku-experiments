@@ -4,9 +4,11 @@
 
     let width, height;
     let data = [];
+    let signals = [];
     let params = [];
     let idx = 0;
-    let every = 10;
+    let signalIdx = 0;
+    let every = 1;
 
     let point = 2;
     let meta = "";
@@ -15,18 +17,22 @@
     let nr1 = 0;
     let inc = 0.0;
     let rand = 0;
-    let columnWidth = 80;
+    let columnWidth = 50;
     let yPosition = columnWidth;
     let xPosition = columnWidth;
-    let previousX2;
-    let previousY2;
+    let previousX2 = NaN;
+    let previousY2 = NaN;
 
     onMount(async () => {
-        const response = await fetch("weather.json");
+        const response = await fetch("http://localhost:3000/api/weather");
         data = await response.json();
         params = Object.keys(data[0]).filter(
             (key) => typeof data[0][key] === "number",
         );
+
+        const signalResponse = await fetch("http://localhost:3000/api/signal");
+        const signalData = await signalResponse.json();
+        signals = signalData.map((d) => d.signal);
 
         const maxValues = {};
         const minValues = {};
@@ -77,10 +83,8 @@
 
         const delays = [100, 200, 500, 1000, 2000, 3000];
         const randomDelay = delays[Math.floor(Math.random() * delays.length)];
-        // setTimeout(getRandomParams, randomDelay);
+        setTimeout(getRandomParams, randomDelay);
     }
-
-    // getRandomParams();
 
     const sketch = (s) => {
         s.setup = () => {
@@ -89,29 +93,30 @@
         };
 
         s.draw = () => {
-            // s.background(255, 5);
-            // s.frameRate(2);
+            if (!data.length || !signals.length) return;
+
             const record = data[idx];
 
             let param = s.map(record[params[nr]], 0, columnWidth, 10, 60) || 1;
             let param1 = s.map(record[params[nr]], 0, columnWidth, 40, 60) || 1;
+            let signal = s.map(signals[signalIdx], -100, -60, 40, 60) || 1;
 
-            s.strokeWeight(1);
-            
+            s.strokeWeight(1.2);
+
             let x1 = xPosition + param;
-            let y1 = previousY2 - param1 + s.noise(inc) * 60;
-            let x2 = previousX2 + param + s.noise(inc) * 20;
+            let y1 = previousY2 - param1 + s.noise(inc) * signal;
+            let x2 = previousX2 + param + s.noise(inc) * signal;
             let y2 = yPosition + param1;
-            
-            if(previousX2 && previousY2){
+
+            if (!isNaN(previousX2) && !isNaN(previousY2)) {
                 s.line(x1, y1, x2, y2);
             }
-            
+
             inc += 0.02;
             yPosition += point;
             previousX2 = x1;
-            previousY2 = y2
-          
+            previousY2 = y2;
+
             if (yPosition + s.random(10, columnWidth) >= height) {
                 xPosition += columnWidth + 10;
                 yPosition = s.random(10, columnWidth);
@@ -119,19 +124,24 @@
                 previousY2 = NaN;
             }
 
-            if (xPosition + columnWidth >= width) {
+            if (xPosition + columnWidth >= width || idx + 1 >= data.length) {
                 xPosition = columnWidth;
                 yPosition = s.random(10, columnWidth);
                 previousX2 = NaN;
                 previousY2 = NaN;
                 s.background(255);
+                getRandomParams();
             }
 
             idx = (idx + every) % data.length;
+            signalIdx =
+                signals.length > 0
+                    ? (signalIdx + every) % signals.length
+                    : signalIdx + every;
+
             meta =
                 `${record.time} , ${params[nr]}, ${params[nr1]}, ${record.runtime}` ||
                 meta;
-
         };
     };
 
@@ -140,7 +150,7 @@
     }
 </script>
 
-{#if data.length === 0}
+{#if data.length == 0 && signals.length == 0}
     <article>Loading...</article>
 {:else}
     <div>{meta}</div>
@@ -151,7 +161,7 @@
         <button on:click={onClick}> Change </button>
     </label>
     <label>
-        <input type="number" bind:value={every} min="0" max="{data.length}" />
+        <input type="number" bind:value={every} min="0" max={data.length} />
     </label>
 {/if}
 

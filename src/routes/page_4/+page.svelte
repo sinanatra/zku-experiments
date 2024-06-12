@@ -6,7 +6,7 @@
     let range = 100;
 
     onMount(async () => {
-        const response = await fetch("weather.json");
+        const response = await fetch("http://localhost:3000/api/weather");
         data = await response.json();
         range = data.length;
         getRandomParams();

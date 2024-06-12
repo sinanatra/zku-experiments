@@ -36,11 +36,12 @@
             const solar =
                 data[idx].solarradiation == 0
                     ? 0.1
-                    : s.map(data[idx].solarradiation, 1, 300, 0.5, 1.0);
+                    : s.map(data[idx].solarradiation, 1, 600, 0.5, 1.0);
 
-            const wind = s.map(data[idx].windspeed, 0, 60, 0.1, 3);
+            const wind = s.map(data[idx].windspeed, 0, 60, 0.1, 2);
 
             const windDirection = (data[idx].winddir + 180) % 360;
+
             const windVector = [s.cos(windDirection), s.sin(windDirection)];
 
             const dewpointDensity = s.map(data[idx].dewpoint, -5, 20, 0.01, 4);
@@ -54,14 +55,15 @@
             if (selected == "accurate") {
                 distortion = 1.0; //1.0;
                 amplitude = 0.05;
-                amplitudeMult = 0.4;
+                amplitudeMult = 0.1;
                 sat = 0.0;
-                tempHue = 213 / 360;
+                tempHue = 216 / 360;
             } else {
+                tempHue = 200 / 360;
                 distortion = 3.0; //1.0;
                 amplitude = 0.01;
-                sat = 0.8;
                 amplitudeMult = 1.1;
+                sat = 0.8;
             }
 
             myShader.setUniform("iResolution", [width, height]);
@@ -214,34 +216,40 @@
         f *= r + f;
 
         float c = 0.0;
-        // time = iTime * speed * 2.0;
-        // uv = p * vec2(iResolution.x / iResolution.y, 1.0);
-        // uv *= cloudscale * 2.0;
-        // uv -= q - time * windVector;
-        // weight = 0.4;
-        // for (int i = 0; i < 7; i++) {
-        //     c += weight * noise(uv);
-        //     uv = m * uv + time * windVector;
-        //     weight *= 0.6;
-        // }
+
+        if (skyDarkness == 216.0 / 360.0) {
+            time = iTime * speed * 2.0;
+            uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+            uv *= cloudscale * 2.0;
+            uv -= q - time * windVector;
+            weight = 0.4;
+            for (int i = 0; i < 7; i++) {
+                c += weight * noise(uv);
+                uv = m * uv + time * windVector;
+                weight *= 0.6;
+            }
+        }
 
         float c1 = 0.0;
-        // time = iTime * speed * 3.0;
-        // uv = p * vec2(iResolution.x / iResolution.y, 1.0);
-        // uv *= cloudscale * 1.0;
-        // uv -= q - time * windVector;
-        // weight = 0.4;
-        // for (int i = 0; i < 7; i++) {
-        //     c1 += abs(weight * noise(uv));
-        //     uv = m * uv + time * windVector;
-        //     weight *= 0.6;
+        // if (skyDarkness == 216.0 / 360.0) {
+        //     time = iTime * speed * 3.0;
+        //     uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        //     uv *= cloudscale * 1.0;
+        //     uv -= q - time * windVector;
+        //     weight = 0.4;
+        //     for (int i = 0; i < 7; i++) {
+        //         c1 += abs(weight * noise(uv));
+        //         uv = m * uv + time * windVector;
+        //         weight *= 0.6;
+        //     }
         // }
 
-        // c += c1;
+        c += c1;
 
         vec3 skycolour1 = getHSB(skyDarkness, 0.8, solar);
         vec3 skycolour2 = getHSB(skyDarkness, 0.6, solar + 0.3);
         vec3 skycolour = mix(skycolour2, skycolour1, clamp(p.y, 0.0, 1.0));
+
         skycolour = skycolour * skyDarkness;
 
         vec3 cloudcolour = vec3(1.1, 1.1, 0.9) * clamp((clouddark + cloudlight * c), 0.0, 1.0);
@@ -273,9 +281,9 @@
         if (windDir >= 247.5 && windDir < 292.5) return "←"; // West
         if (windDir >= 292.5 && windDir < 337.5) return "↖"; // Northwest
     }
-function onChange(event) {
-    selected = event.currentTarget.value;
-}
+    function onChange(event) {
+        selected = event.currentTarget.value;
+    }
 </script>
 
 {#if data[idx].length == 0}
