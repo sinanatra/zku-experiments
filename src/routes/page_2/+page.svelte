@@ -157,12 +157,12 @@
     <article bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
     </article>
-    <label>
+    <!-- <label>
         <button on:click={onClick}> Change </button>
     </label>
     <label>
         <input type="number" bind:value={every} min="0" max={data.length} />
-    </label>
+    </label> -->
 {/if}
 
 <style>
