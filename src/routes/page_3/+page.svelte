@@ -4,13 +4,15 @@
 
     let width, height;
     let data = [];
+    let signals = [];
     let params = [];
     let maxValues = [];
     let meta = "";
     let flowField = [];
     let cols, rows;
     let colWidth;
-    const resolution = 10;
+    const resolution = 1;
+    let signalIdx = 1;
 
     onMount(async () => {
         const response = await fetch("http://localhost:3000/api/weather");
@@ -18,6 +20,11 @@
         params = Object.keys(data[0]).filter(
             (key) => typeof data[0][key] === "number",
         );
+
+        const signalResponse = await fetch("http://localhost:3000/api/signal");
+        const signalData = await signalResponse.json();
+        signals = signalData.map((d) => d.signal);
+
         maxValues = params.map((param) => getMaxValue(param));
     });
 
@@ -25,58 +32,66 @@
         s.setup = () => {
             s.createCanvas(width, height);
             s.colorMode(s.HSL);
-            s.background(255);
+            s.background(0);
             cols = params.length;
-            colWidth = s.width / cols;
+            colWidth = width / cols;
             rows = s.floor(height / resolution);
             initializeFlowField(s);
         };
 
         s.draw = () => {
-            s.background(255, 0.02);
+            s.background(0, 0.01);
+            if (!data.length || !signals.length) return;
 
-            if (data.length > 0) {
-                const rowIdx = s.frameCount % rows;
+            const rowIdx = s.frameCount % rows;
 
-                for (let col = 0; col < cols; col++) {
-                    const x = col * colWidth;
-                    const y = rowIdx * resolution;
+            signalIdx = signalIdx + (resolution % signals.length);
+            let signal = s.map(signals[signalIdx], -100, -60, 1, 10) || 1;
 
-                    s.stroke(0);
-                    s.push();
-                    s.translate(x + colWidth / 2, y + resolution / 2);
-                    s.rotate(flowField[rowIdx][col].heading());
-                    s.line(0, 0, colWidth / 2, 0);
-                    s.pop();
-                }
+            for (let col = 0; col < cols; col++) {
+                const x = col * colWidth;
+                const y = rowIdx * resolution;
 
-                updateFlowField(s, rowIdx);
+                s.strokeWeight(1);
+
+                s.push();
+                s.translate(x, y + resolution);
+
+                s.rotate(flowField[rowIdx][col].heading());
+
+                s.stroke(255);
+                s.line(x, y, colWidth, signal);
+
+                s.stroke("#5136C3");
+                s.line(0, 0, colWidth, 0);
+
+                s.pop();
             }
+
+            updateFlowField(s, rowIdx);
         };
 
         function updateFlowField(s, rowIdx) {
-            if (data.length > 0) {
-                let idx = s.frameCount % data.length;
+            let idx = s.frameCount % data.length;
 
-                let record = data[idx];
+            let record = data[idx];
 
-                for (let col = 0; col < cols; col++) {
-                    let normalizedValue = s.map(
-                        record[params[col]],
-                        0,
-                        maxValues[col],
-                        0,
-                        s.TWO_PI,
-                    );
+            for (let col = 0; col < cols; col++) {
+                let normalizedValue = s.map(
+                    record[params[col]],
+                    0,
+                    maxValues[col],
+                    0,
+                    s.TWO_PI,
+                );
 
-                    flowField[rowIdx][col] = s.createVector(
-                        s.cos(normalizedValue),
-                        s.sin(normalizedValue),
-                    );
-                }
-
-                meta = record.time;
+                flowField[rowIdx][col] = s.createVector(
+                    s.cos(normalizedValue),
+                    s.sin(normalizedValue),
+                );
             }
+
+            meta = record.time;
         }
 
         function initializeFlowField(s) {
@@ -84,10 +99,7 @@
             for (let i = 0; i < rows; i++) {
                 flowField[i] = new Array(cols);
                 for (let j = 0; j < cols; j++) {
-                    flowField[i][j] = s.createVector(
-                        s.random(-1, 1),
-                        s.random(-1, 1),
-                    );
+                    flowField[i][j] = s.createVector(0, 0);
                 }
             }
         }
@@ -116,5 +128,7 @@
         font-family: sans-serif;
         display: flex;
         min-height: 100vh;
+        background-color: black;
+        color: white;
     }
 </style>

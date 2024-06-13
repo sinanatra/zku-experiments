@@ -55,16 +55,21 @@
                         record[test], //param
                         0,
                         maxValues[i],
-                        0,
+                        10,
                         width,
                     );
 
+                    if(addLine){
+                        addLine = false;
+                        s.fill("yellow");
+                        s.rect(0, yPosition, width, point + 3);
+                    }
                     if (interference && signals.length > 0) {
                         let normalizedSignal = s.map(
                             sig,
                             -80,
                             -70,
-                            0,
+                            10,
                             width / 2,
                         );
                         s.fill("red");
@@ -86,8 +91,10 @@
         return Math.max(...data.map((d) => d[param]));
     }
 
+    let addLine = false;
     function onChange(event) {
         interference = event.currentTarget.value === "true";
+        addLine = true;
     }
 </script>
 

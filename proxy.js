@@ -15,7 +15,7 @@ app.use((req, res, next) => {
 app.get('/api/weather', async (req, res) => {
     try {
         const response = await axios.get('https://weather.hiveeyes.org/api/climart/zku/weatherstation/main/data.json?from=now-24h&to=now');
-        res.json(response.data);
+        res.json(response.data.reverse());
     } catch (error) {
         res.status(500).send(error.message);
     }
@@ -24,7 +24,7 @@ app.get('/api/weather', async (req, res) => {
 app.get('/api/signal', async (req, res) => {
     try {
         const response = await axios.get('https://weather.hiveeyes.org/api/umwelt/openbeeresearch/luftdaten/airrohr-01/data.json?from=now-5d&to=now');
-        res.json(response.data);
+        res.json(response.data.reverse());
     } catch (error) {
         res.status(500).send(error.message);
     }
