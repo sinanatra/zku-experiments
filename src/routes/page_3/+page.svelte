@@ -11,8 +11,8 @@
     let flowField = [];
     let cols, rows;
     let colWidth;
-    const resolution = 1;
     let signalIdx = 1;
+    const resolution = 1;
 
     onMount(async () => {
         const response = await fetch("http://localhost:3000/api/weather");
@@ -45,8 +45,8 @@
 
             const rowIdx = s.frameCount % rows;
 
-            signalIdx = signalIdx + (resolution % signals.length);
-            let signal = s.map(signals[signalIdx], -100, -60, 1, 10) || 1;
+            signalIdx = (signalIdx + resolution) % signals.length;
+            let signal = s.map(signals[signalIdx], -100, -60, 1, 30) || 1;
 
             for (let col = 0; col < cols; col++) {
                 const x = col * colWidth;
@@ -60,15 +60,14 @@
                 s.rotate(flowField[rowIdx][col].heading());
 
                 s.stroke(255);
-                s.line(x, y, colWidth, signal);
+                s.line(x, y, signal, 0);
 
                 s.stroke("#5136C3");
                 s.line(0, 0, colWidth, 0);
 
                 s.pop();
+                updateFlowField(s, rowIdx);
             }
-
-            updateFlowField(s, rowIdx);
         };
 
         function updateFlowField(s, rowIdx) {

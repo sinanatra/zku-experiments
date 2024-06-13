@@ -59,19 +59,22 @@
                         width,
                     );
 
-                    if(addLine){
+                    if (addLine) {
                         addLine = false;
-                        s.fill("yellow");
-                        s.rect(0, yPosition, width, point + 3);
+                        s.fill("blue");
+                        s.rect(0, yPosition, width, 0.8);
                     }
+
+                    let normalizedSignal = s.map(sig, -70, -80, 10, 500);
+
+                    if (normalizedSignal > 250) {
+                        if (interference == false) {
+                            addLine = true;
+                        }
+                        interference = !interference;
+                    }
+
                     if (interference && signals.length > 0) {
-                        let normalizedSignal = s.map(
-                            sig,
-                            -80,
-                            -70,
-                            10,
-                            width / 2,
-                        );
                         s.fill("red");
                         s.rect(normalizedSignal, yPosition, point, point);
                         normalizedValue += normalizedSignal;
@@ -101,28 +104,30 @@
 {#if data.length === 0 && signals.length === 0}
     <article>Loading...</article>
 {:else}
-    <div>{meta}</div>
+    <div>
+        {meta}
+        <label>
+            <input
+                checked={!interference}
+                on:change={onChange}
+                type="radio"
+                name="layout"
+                value="false"
+            /> No interference
+        </label>
+        <label>
+            <input
+                checked={interference}
+                on:change={onChange}
+                type="radio"
+                name="layout"
+                value="true"
+            /> With interference
+        </label>
+    </div>
     <article bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
     </article>
-    <label>
-        <input
-            checked={!interference}
-            on:change={onChange}
-            type="radio"
-            name="layout"
-            value="false"
-        /> No interference
-    </label>
-    <label>
-        <input
-            checked={interference}
-            on:change={onChange}
-            type="radio"
-            name="layout"
-            value="true"
-        /> With interference
-    </label>
 {/if}
 
 <style>
