@@ -10,7 +10,7 @@
     let signalIdx = 0;
     let every = 1;
 
-    let point = 2;
+    let point = 1;
     let meta = "";
 
     let nr = 0;
@@ -99,13 +99,11 @@
 
             let param = s.map(record[params[nr]], 0, columnWidth, 10, 20) || 1;
             let param1 = s.map(record[params[nr]], 0, columnWidth, 10, 20) || 1;
-            let signal = s.map(signals[signalIdx], -100, -60, 10, 60) || 1;
-
-            s.strokeWeight(1.2);
+            let signal = s.map(signals[signalIdx], -90, -60, 10, 40) || 1;
 
             let x1 = xPosition + param;
             let y1 = previousY2 - param1 + s.noise(inc) * signal;
-            let x2 = previousX2 + param + s.noise(inc) * signal;
+            let x2 = previousX2 + param + s.noise(inc)  * signal;
             let y2 = yPosition + param1;
 
             if (!isNaN(previousX2) && !isNaN(previousY2)) {
@@ -139,9 +137,7 @@
                     ? (signalIdx + every) % signals.length
                     : signalIdx + every;
 
-            meta =
-                `${record.time} , ${params[nr]}, ${params[nr1]}, ${record.runtime}` ||
-                meta;
+            meta = `${record.time}` || meta;
         };
     };
 
