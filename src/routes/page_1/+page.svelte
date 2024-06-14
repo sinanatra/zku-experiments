@@ -68,7 +68,6 @@
                     let normalizedSignal = s.map(sig, -70, -80, 10, 500);
                     let framecheck = s.frameCount % 40;
 
-                    console.log(framecheck)
                     if (normalizedSignal > 250 && framecheck == 0) {
                         if (interference == false) {
                             addLine = true;
