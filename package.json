@@ -3,7 +3,8 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "concurrently \"npm run dev:svelte\" \"npm run dev:proxy\"",
+		"dev": "npm run dev:svelte", 
+		"conc": "concurrently \"npm run dev:svelte\" \"npm run dev:proxy\"",
 		"dev:svelte": "vite dev",
 		"dev:proxy": "node proxy.js"
 	},

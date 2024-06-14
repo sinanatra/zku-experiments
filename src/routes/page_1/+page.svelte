@@ -14,13 +14,13 @@
     let interference = false;
 
     onMount(async () => {
-        const response = await fetch("http://localhost:3000/api/weather");
+        const response = await fetch("https://zku-experiments.onrender.com/api/weather");
         data = await response.json();
         params = Object.keys(data[0]).filter(
             (key) => typeof data[0][key] === "number",
         );
 
-        const signalResponse = await fetch("http://localhost:3000/api/signal");
+        const signalResponse = await fetch("https://zku-experiments.onrender.com/api/signal");
         const sigData = await signalResponse.json();
         signals = sigData.map((d) => d.signal);
         nr = Math.floor(Math.random() * params.length);

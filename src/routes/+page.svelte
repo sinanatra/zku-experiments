@@ -6,7 +6,7 @@
 
     let data = [];
     onMount(async () => {
-        const response = await fetch("http://localhost:3000/api/weather");
+        const response = await fetch("https://zku-experiments.onrender.com/api/weather");
         // const response = await fetch("weather.json");
         data = await response.json();
         updateIndex();
