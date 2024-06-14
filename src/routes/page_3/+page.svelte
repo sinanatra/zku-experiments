@@ -15,13 +15,13 @@
     const resolution = 1;
 
     onMount(async () => {
-        const response = await fetch("zku-middleware.vercel.app/api/weather");
+        const response = await fetch("https://zku-middleware.vercel.app/api/weather");
         data = await response.json();
         params = Object.keys(data[0]).filter(
             (key) => typeof data[0][key] === "number",
         );
 
-        const signalResponse = await fetch("zku-middleware.vercel.app/api/signal");
+        const signalResponse = await fetch("https://zku-middleware.vercel.app/api/signal");
         const signalData = await signalResponse.json();
         signals = signalData.map((d) => d.signal);
 

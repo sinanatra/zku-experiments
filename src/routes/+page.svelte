@@ -6,7 +6,7 @@
 
     let data = [];
     onMount(async () => {
-        const response = await fetch("zku-middleware.vercel.app/api/weather");
+        const response = await fetch("https://zku-middleware.vercel.app/api/weather");
         // const response = await fetch("weather.json");
         data = await response.json();
         updateIndex();
