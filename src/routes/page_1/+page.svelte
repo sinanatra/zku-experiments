@@ -62,7 +62,7 @@
                     if (addLine) {
                         addLine = false;
                         s.fill("yellow");
-                        s.rect(0, yPosition, width, 0.8);
+                        s.rect(0, yPosition, width, 1);
                     }
 
                     let normalizedSignal = s.map(sig, -70, -80, 10, 500);
