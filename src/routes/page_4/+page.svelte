@@ -6,7 +6,7 @@
     let range = 100;
 
     onMount(async () => {
-        const response = await fetch("https://zku-experiments.onrender.com/api/weather");
+        const response = await fetch("zku-middleware.vercel.app/api/weather");
         data = await response.json();
         range = data.length;
         getRandomParams();
