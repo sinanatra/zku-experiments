@@ -61,13 +61,15 @@
 
                     if (addLine) {
                         addLine = false;
-                        s.fill("blue");
+                        s.fill("yellow");
                         s.rect(0, yPosition, width, 0.8);
                     }
 
                     let normalizedSignal = s.map(sig, -70, -80, 10, 500);
+                    let framecheck = s.frameCount % 40;
 
-                    if (normalizedSignal > 250) {
+                    console.log(framecheck)
+                    if (normalizedSignal > 250 && framecheck == 0) {
                         if (interference == false) {
                             addLine = true;
                         }
