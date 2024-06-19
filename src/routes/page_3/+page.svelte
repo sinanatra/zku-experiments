@@ -61,8 +61,8 @@
 
                 s.stroke(255);
                 s.line(x, y, signal, 0);
-
-                s.stroke("#5136C3");
+                
+                s.stroke("yellow");
                 s.line(0, 0, colWidth, 0);
 
                 s.pop();

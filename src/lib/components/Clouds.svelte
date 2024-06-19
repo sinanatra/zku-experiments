@@ -38,7 +38,7 @@
                     ? 0.1
                     : s.map(data[idx].solarradiation, 1, 600, 0.5, 1.0);
 
-            const wind = s.map(data[idx].windspeed, 0, 60, 0.1, 2);
+            const wind = s.map(data[idx].windspeed, 0, 60, 0.1, 1);
 
             const windDirection = (data[idx].winddir + 180) % 360;
 
@@ -223,22 +223,22 @@
         uv = p * vec2(iResolution.x / iResolution.y, 1.0);
         uv *= cloudscale * 2.0;
         uv -= q - time * windVector;
-        weight = 0.1; //0.4
-        for (int i = 0; i < 7; i++) {
+        weight = 0.4; //0.4
+        for (int i = 0; i < 4; i++) {
             c += weight * noise(uv);
             uv = m * uv + time * windVector;
-            weight *= 0.4;
+            weight *= 0.04;
         }
         
         time = iTime * speed * 2.0;
         uv = p * vec2(iResolution.x / iResolution.y, 1.0);
         uv *= cloudscale * 2.0;
         uv -= q - time * windVector;
-        weight = 0.1;
+        weight = 0.4;
         for (int i = 0; i < 4; i++) {
             c1 += abs(weight * noise(uv));
             uv = m * uv + time * windVector;
-            weight *= 0.4;
+            weight *= 0.04;
         }
 
         //  check
