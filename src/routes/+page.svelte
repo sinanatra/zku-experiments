@@ -9,18 +9,18 @@
         const response = await fetch("https://zku-middleware.vercel.app/api/weather");
         // const response = await fetch("weather.json");
         data = await response.json();
+        // data = data.reverse()
         updateIndex();
     });
 
     function updateIndex() {
         if (idx < data.length - 1) {
             idx += every;
-            idx += every;
 
             // setTimeout(updateIndex, 1000);
         }
         // idx =  Math.floor(Math.random() * data.length) + 1
-        setTimeout(updateIndex, 6000);
+        setTimeout(updateIndex, 10000);
     }
 </script>
 

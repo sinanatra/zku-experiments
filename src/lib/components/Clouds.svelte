@@ -31,7 +31,7 @@
             }
             previdx = idx;
 
-            const rain = s.map(data[idx].humidity, 40, 100, 0.5, 0);
+            const rain = s.map(data[idx].humidity, 40, 100, 0.9, 0);
             const light = s.map(data[idx].solarradiation, 0, 600, 0.2, 1.0);
             const solar =
                 data[idx].solarradiation == 0
@@ -44,8 +44,8 @@
 
             const windVector = [s.cos(windDirection), s.sin(windDirection)];
 
-            const dewpointDensity = s.map(data[idx].dewpoint, -5, 20, 0.01, 4);
-            const humidityDensity = s.map(data[idx].humidity, 60, 100, 0.01, 4);
+            const dewpointDensity = s.map(data[idx].dewpoint, 0, 20, 0.01, 1);
+            const humidityDensity = s.map(data[idx].humidity, 10, 100, 0.01, 1);
 
             let cloudDensity = dewpointDensity * humidityDensity;
 
@@ -63,7 +63,7 @@
                 distortion = 3.0; //1.0;
                 amplitude = 0.01;
                 amplitudeMult = 1.1;
-                sat = 0.8;
+                sat = 0.5; // 0.8
             }
 
             myShader.setUniform("iResolution", [width, height]);
@@ -82,7 +82,7 @@
             myShader.setUniform("distortion", distortion);
             myShader.setUniform("iAmplitude", amplitude);
             myShader.setUniform("amplitudeMult", amplitudeMult);
-            myShader.setUniform("s", sat);
+            myShader.setUniform("sat", sat);
 
             // draw
             s.fill(255);
@@ -121,7 +121,7 @@
     uniform float distortion;
     uniform float iAmplitude;
     uniform float amplitudeMult;
-    uniform float s;
+    uniform float sat;
 
     uniform float cloudscale;
     uniform float speed;
@@ -216,47 +216,48 @@
         f *= r + f;
 
         float c = 0.0;
+        float c1 = 0.0;
 
-        if (skyDarkness == 216.0 / 360.0) {
-            time = iTime * speed * 2.0;
-            uv = p * vec2(iResolution.x / iResolution.y, 1.0);
-            uv *= cloudscale * 2.0;
-            uv -= q - time * windVector;
-            weight = 0.4;
-            for (int i = 0; i < 7; i++) {
-                c += weight * noise(uv);
-                uv = m * uv + time * windVector;
-                weight *= 0.6;
-            }
+        //  check
+        time = iTime * speed * 2.0;
+        uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        uv *= cloudscale * 2.0;
+        uv -= q - time * windVector;
+        weight = 0.1; //0.4
+        for (int i = 0; i < 7; i++) {
+            c += weight * noise(uv);
+            uv = m * uv + time * windVector;
+            weight *= 0.4;
+        }
+        
+        time = iTime * speed * 2.0;
+        uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        uv *= cloudscale * 2.0;
+        uv -= q - time * windVector;
+        weight = 0.1;
+        for (int i = 0; i < 4; i++) {
+            c1 += abs(weight * noise(uv));
+            uv = m * uv + time * windVector;
+            weight *= 0.4;
         }
 
-        float c1 = 0.0;
-        // if (skyDarkness == 216.0 / 360.0) {
-        //     time = iTime * speed * 3.0;
-        //     uv = p * vec2(iResolution.x / iResolution.y, 1.0);
-        //     uv *= cloudscale * 1.0;
-        //     uv -= q - time * windVector;
-        //     weight = 0.4;
-        //     for (int i = 0; i < 7; i++) {
-        //         c1 += abs(weight * noise(uv));
-        //         uv = m * uv + time * windVector;
-        //         weight *= 0.6;
-        //     }
-        // }
+        //  check
+
 
         c += c1;
 
         vec3 skycolour1 = getHSB(skyDarkness, 0.8, solar);
         vec3 skycolour2 = skycolour1; // getHSB(skyDarkness, 0.6, solar + 0.3);
-        vec3 skycolour = mix(skycolour2, skycolour1, clamp(p.y, 0.0, 1.0));
+        vec3 skycolour = mix(skycolour2, skycolour1, clamp(p.y, 0.0, 5.0));
 
         skycolour = skycolour * skyDarkness;
 
-        vec3 cloudcolour = vec3(1.1, 1.1, 0.9) * clamp((clouddark + cloudlight * c), 0.0, 1.0);
+        // vec3 cloudcolour = vec3(1.1, 1.1, 0.9) * clamp((clouddark + cloudlight * c), 0.8, 1.0);
+        vec3 cloudcolour = vec3(1.0) * clamp((clouddark + cloudlight * c), 0.5, 1.0); // grayscale clouds
 
         f = cloudcover + cloudalpha * f * r;
 
-        vec3 result = mix(skycolour, clamp(skytint * skycolour + cloudcolour, s, 0.9), clamp(f + c, 0.0, 1.0));
+        vec3 result = mix(skycolour, clamp(skytint * skycolour + cloudcolour, sat, 0.9), clamp(f + c, 0.0, 1.0));
 
         fragColor = vec4(result, 1.0);
     }
