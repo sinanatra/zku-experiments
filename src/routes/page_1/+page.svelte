@@ -66,7 +66,7 @@
                     }
 
                     let normalizedSignal = s.map(sig, -70, -80, 10, 500);
-                    let framecheck = s.frameCount % 40;
+                    let framecheck = s.frameCount % 120;
 
                     if (normalizedSignal > 250 && framecheck == 0) {
                         if (interference == false) {
