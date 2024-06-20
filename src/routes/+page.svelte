@@ -28,13 +28,14 @@
             ></iframe>
         </div>
         <div class="face right">
-            <iframe
+           <img src="https://www.dwd.de/DWD/wetter/sat/bilder/meteosat/satbild_hrvir_akt.png" alt="">
+            <!-- <iframe
                 src="/page_3"
                 title="clouds"
                 width="100%"
                 height="100%"
                 frameborder="0"
-            ></iframe>
+            ></iframe> -->
         </div>
         <div class="face top">
             <iframe
@@ -122,5 +123,11 @@
         100% {
             transform: rotateX(-90deg) rotateY(360deg);
         }
+    }
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 </style>
