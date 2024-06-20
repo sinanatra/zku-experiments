@@ -4,7 +4,9 @@
     let height = 800;
 
     export let data;
+    export let signals;
     export let idx;
+    export let signalIdx;
     let randomSeed = 0;
     let previdx;
     let distortion = 3.0; //1.0;
@@ -13,6 +15,7 @@
     let sat = 0.5;
     let selected = "abstract";
     let cloudDensity;
+
     const sketch = (s) => {
         let myShader;
 
@@ -52,18 +55,26 @@
             // const timeOfDay = new Date(data[idx].time).getHours();
             // const hueAdjustment = s.map(timeOfDay, 0, 23, -10, 0);
             let tempHue = 0 / 360;
+            let signal = s.map(signals[signalIdx], -90, -60, 0.0, 1.0) || 1.0;
+
+            if (signal > 0.6) {
+                selected = "abstract";
+            } else {
+                selected = "accurate";
+            }
+
             if (selected == "accurate") {
                 distortion = 1.0; //1.0;
-                amplitude = 0.05;
-                amplitudeMult = 0.1;
-                sat = 0.0;
+                amplitude = 0.01;
+                amplitudeMult = 0.5;
+                sat = 0.5;
                 tempHue = 216 / 360;
             } else {
-                tempHue = 200 / 360;
                 distortion = 3.0; //1.0;
                 amplitude = 0.01;
                 amplitudeMult = 1.1;
                 sat = 0.5; // 0.8
+                tempHue = 200 / 360;
             }
 
             myShader.setUniform("iResolution", [width, height]);
@@ -277,23 +288,21 @@
     <article>Loading...</article>
 {:else}
     <div class="metadata">
-        <div>
-            <span>
-                {new Date(data[idx].time).toLocaleString()}
-            </span>
-            <span>
-                Solar Radiation: {data[idx].solarradiation} /
-            </span>
-            <span>
-                humidity: {data[idx].humidity} /
-            </span>
-            <span>
-                dewpoint: {data[idx].dewpoint} /
-            </span>
-            <span>
-                cloud: {cloudDensity}
-            </span>
-        </div>
+        <span>
+            {new Date(data[idx].time).toLocaleString()}
+        </span>
+        <span>
+            Solar Radiation: {data[idx].solarradiation} /
+        </span>
+        <span>
+            humidity: {data[idx].humidity} /
+        </span>
+        <span>
+            dewpoint: {data[idx].dewpoint} /
+        </span>
+        <span>
+            cloud: {cloudDensity}
+        </span>
     </div>
     <section bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
@@ -324,14 +333,9 @@
     }
 
     .metadata {
-        width: 100vw;
         background-color: black;
         color: white;
-        position: fixed;
-        top: 0;
-        z-index: 100;
     }
-
     .metadata span:first-of-type {
         color: yellow;
     }

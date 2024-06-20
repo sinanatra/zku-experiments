@@ -10,7 +10,7 @@
     let signalIdx = 0;
     let every = 1;
 
-    let point = 1;
+    let point = 2;
     let meta = "";
 
     let nr = 0;
@@ -24,13 +24,17 @@
     let previousY2 = NaN;
 
     onMount(async () => {
-        const response = await fetch("https://zku-middleware.vercel.app/api/weather");
+        const response = await fetch(
+            "https://zku-middleware.vercel.app/api/weather",
+        );
         data = await response.json();
         params = Object.keys(data[0]).filter(
             (key) => typeof data[0][key] === "number",
         );
 
-        const signalResponse = await fetch("https://zku-middleware.vercel.app/api/signal");
+        const signalResponse = await fetch(
+            "https://zku-middleware.vercel.app/api/signal",
+        );
         const signalData = await signalResponse.json();
         signals = signalData.map((d) => d.signal);
 
@@ -90,6 +94,8 @@
         s.setup = () => {
             s.createCanvas(width, height);
             s.background(255);
+            s.background(0);
+            s.stroke(255);
         };
 
         s.draw = () => {
@@ -103,7 +109,7 @@
 
             let x1 = xPosition + param;
             let y1 = previousY2 - param1 + s.noise(inc) * signal;
-            let x2 = previousX2 + param + s.noise(inc)  * signal;
+            let x2 = previousX2 + param + s.noise(inc) * signal;
             let y2 = yPosition + param1;
 
             if (!isNaN(previousX2) && !isNaN(previousY2)) {
@@ -162,11 +168,9 @@
 {/if}
 
 <style>
-    div {
+    article {
         background-color: black;
         color: white;
-    }
-    article {
         font-family: sans-serif;
         display: flex;
         height: 100vh;

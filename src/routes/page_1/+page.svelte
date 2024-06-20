@@ -14,13 +14,17 @@
     let interference = false;
 
     onMount(async () => {
-        const response = await fetch("https://zku-middleware.vercel.app/api/weather");
+        const response = await fetch(
+            "https://zku-middleware.vercel.app/api/weather",
+        );
         data = await response.json();
         params = Object.keys(data[0]).filter(
             (key) => typeof data[0][key] === "number",
         );
 
-        const signalResponse = await fetch("https://zku-middleware.vercel.app/api/signal");
+        const signalResponse = await fetch(
+            "https://zku-middleware.vercel.app/api/signal",
+        );
         const sigData = await signalResponse.json();
         signals = sigData.map((d) => d.signal);
         nr = Math.floor(Math.random() * params.length);
@@ -50,6 +54,20 @@
                 const record = data[idx];
                 const sig = signals[idx];
                 let test = [params[nr]];
+                let normalizedSignal = s.map(sig, -70, -80, 10, 500);
+                let framecheck = s.frameCount % 120;
+
+                if (addLine) {
+                    addLine = false;
+                    s.fill("yellow");
+                    s.rect(0, yPosition - 1, width, 1);
+                }
+
+                if (normalizedSignal > 250 && framecheck == 0) {
+                    addLine = true;
+                    interference = !interference;
+                }
+
                 params.forEach((param, i) => {
                     let normalizedValue = s.map(
                         record[test], //param
@@ -58,22 +76,6 @@
                         10,
                         width,
                     );
-
-                    if (addLine) {
-                        addLine = false;
-                        s.fill("yellow");
-                        s.rect(0, yPosition, width, 1);
-                    }
-
-                    let normalizedSignal = s.map(sig, -70, -80, 10, 500);
-                    let framecheck = s.frameCount % 120;
-
-                    if (normalizedSignal > 250 && framecheck == 0) {
-                        if (interference == false) {
-                            addLine = true;
-                        }
-                        interference = !interference;
-                    }
 
                     if (interference && signals.length > 0) {
                         s.fill("red");

@@ -1,8 +1,3 @@
-<script>
-    import Header from "@components/Header.svelte";
-</script>
-
-<Header />
 <article>
     <div class="cube">
         <div class="face front">
@@ -51,13 +46,13 @@
             ></iframe>
         </div>
         <div class="face bottom">
-            <!-- <iframe
+            <iframe
                 src="/page_4"
                 title="clouds"
                 width="100%"
                 height="100%"
                 frameborder="0"
-            ></iframe> -->
+            ></iframe>
         </div>
     </div>
 </article>
@@ -119,13 +114,13 @@
 
     @keyframes rotate {
         0% {
-            transform: rotateX(-60deg) rotateY(0deg);
+            transform: rotateX(-90deg) rotateY(0deg);
         }
         50% {
-            transform: rotateX(60deg) rotateY(180deg);
+            transform: rotateX(90deg) rotateY(180deg);
         }
         100% {
-            transform: rotateX(-60deg) rotateY(360deg);
+            transform: rotateX(-90deg) rotateY(360deg);
         }
     }
 </style>

@@ -1,114 +1,77 @@
 <script>
-    import ThreeD from "@components/ThreeD.svelte";
-    import { onMount } from "svelte";
+    import CloudsSignals from "@components/CloudsSignals.svelte";
 
+    import { onMount } from "svelte";
+    let idx = 0;
+    let signalIdx = 0;
+    let every = 1;
     let data = [];
-    let range = 100;
+    let signals = [];
 
     onMount(async () => {
-        const response = await fetch("https://zku-middleware.vercel.app/api/weather");
+        const response = await fetch(
+            "https://zku-middleware.vercel.app/api/weather",
+        );
+        // const response = await fetch("weather.json");
         data = await response.json();
-        range = data.length;
-        getRandomParams();
+        // data = data.reverse()
+
+        const signalResponse = await fetch(
+            "https://zku-middleware.vercel.app/api/signal",
+        );
+        const signalData = await signalResponse.json();
+        signals = signalData.map((d) => d.signal);
+
+        updateIndex();
     });
 
-    $: splitData = data.slice(0, range);
+    function updateIndex() {
+        if (idx < data.length - 1) {
+            idx += every;
 
-    let fullParams = [
-        // "baromabs",
-        "baromrel",
-        // "beaufortscale",
-        "dewpoint",
-        "drain_piezo",
-        "erain_piezo",
-        "feelslike",
-        "frostpoint",
-        // "gain10_piezo",
-        // "gain20_piezo",
-        // "gain30_piezo",
-        // "gain40_piezo",
-        // "gain50_piezo",
-        // "heap",
-        "heatindex",
-        "hrain_piezo",
-        "humidex",
-        "humidity",
-        "humidity1",
-        "humidityabs",
-        "humidityabsin",
-        "humidityin",
-        "maxdailygust",
-        "mrain_piezo",
-        "rrain_piezo",
-        "runtime",
-        "simmerindex",
-        // "soilbatt1",
-        // "soilbatt2",
-        // "soilmoisture1",
-        // "soilmoisture2",
-        "solarradiation",
-        "solarradiation_perceived",
-        "temp",
-        // "temp1",
-        // "tempin",
-        // "tf_batt1",
-        // "tf_ch1",
-        "uv",
-        "wh90batt",
-        "winddir",
-        "windgust",
-        "windspeed",
-        "wrain_piezo",
-        // "ws90_ver",
-        // "ws90cap_volt",
-        "yrain_piezo",
-    ];
-    $: selectedParams = [];
+            // setTimeout(updateIndex, 1000);
+        }
+        signalIdx =
+            signals.length > 0
+                ? (signalIdx + every) % signals.length
+                : signalIdx + every;
 
-    function getRandomParams() {
-        const shuffled = fullParams.sort(() => 0.5 - Math.random());
-        // selectedParams = shuffled.slice(0, 3);
-        selectedParams = [ "runtime", shuffled[0], shuffled[1]];
+        // idx =  Math.floor(Math.random() * data.length) + 1
+        setTimeout(updateIndex, 1000);
     }
-
-    setInterval(getRandomParams, 2000);
 </script>
 
-<!-- <label for="range"
-    >Range:
+<!-- <label>
+    IDX:
     <input
         type="number"
-        id="range"
-        bind:value={range}
+        bind:value={idx}
         min="0"
-        max={data.length}
-        step="10"
+        max={data.length - 1}
+        step={every}
+    />
+    Every:
+    <input
+        type="number"
+        bind:value={every}
+        min="0"
+        max={data.length - 1}
+        step="1"
     />
 </label> -->
-
-<!-- {#each fullParams as param}
-    <label>
-        <input
-            type="checkbox"
-            name="flavours"
-            value={param}
-            bind:group={selectedParams}
-        />
-        {param}
-    </label>
-{/each} -->
-
 <article>
-    {#if splitData.length > 0}
+    {#if data.length > 0}
         <section>
-            <ThreeD data={splitData} {selectedParams} />
+            <CloudsSignals {idx} {data} {signals} {signalIdx} />
         </section>
     {/if}
 </article>
 
 <style>
     article {
-        display: flex;
+        /* display: flex; */
+        width: 100%;
+        height: 100vh;
     }
 
     section {
