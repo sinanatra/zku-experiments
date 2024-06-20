@@ -12,7 +12,7 @@
     let amplitudeMult = 1.1;
     let sat = 0.5;
     let selected = "abstract";
-
+    let cloudDensity;
     const sketch = (s) => {
         let myShader;
 
@@ -44,10 +44,10 @@
 
             const windVector = [s.cos(windDirection), s.sin(windDirection)];
 
-            const dewpointDensity = s.map(data[idx].dewpoint, 0, 20, 0.01, 1);
-            const humidityDensity = s.map(data[idx].humidity, 10, 100, 0.01, 1);
+            const dewpointDensity = s.map(data[idx].dewpoint, 0, 30, 0.01, 2);
+            const humidityDensity = s.map(data[idx].humidity, 40, 100, 0.1, 2);
 
-            let cloudDensity = dewpointDensity * humidityDensity;
+            cloudDensity = dewpointDensity * humidityDensity;
 
             // const timeOfDay = new Date(data[idx].time).getHours();
             // const hueAdjustment = s.map(timeOfDay, 0, 23, -10, 0);
@@ -219,26 +219,26 @@
         float c1 = 0.0;
 
         //  check
-        time = iTime * speed * 2.0;
+        time = iTime * speed * 1.0;
         uv = p * vec2(iResolution.x / iResolution.y, 1.0);
-        uv *= cloudscale * 2.0;
+        uv *= cloudscale * 0.1;
         uv -= q - time * windVector;
-        weight = 0.4; //0.4
+        weight = 0.04; //0.4
         for (int i = 0; i < 4; i++) {
             c += weight * noise(uv);
             uv = m * uv + time * windVector;
             weight *= 0.04;
         }
         
-        time = iTime * speed * 2.0;
+        time = iTime * speed * 1.0;
         uv = p * vec2(iResolution.x / iResolution.y, 1.0);
-        uv *= cloudscale * 2.0;
+        uv *= cloudscale * 0.1;
         uv -= q - time * windVector;
-        weight = 0.4;
+        weight = 0.04;
         for (int i = 0; i < 4; i++) {
             c1 += abs(weight * noise(uv));
             uv = m * uv + time * windVector;
-            weight *= 0.04;
+            weight *= 0.09;
         }
 
         //  check
@@ -280,7 +280,7 @@
         <span>
             {new Date(data[idx].time).toLocaleString()}
         </span>
-        <!-- <span>
+        <span>
             Solar Radiation: {data[idx].solarradiation} /
         </span>
         <span>
@@ -290,11 +290,8 @@
             dewpoint: {data[idx].dewpoint} /
         </span>
         <span>
-            windspeed: {data[idx].windspeed} /
+            cloud: {cloudDensity}
         </span>
-        <span>
-            winddir: {data[idx].winddir}
-        </span> -->
     </div>
     <section bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
