@@ -110,9 +110,14 @@
             let signal = s.map(signals[signalIdx], -90, -60, 10, 40) || 1;
 
             let x1 = xPosition + param;
-            let y1 = previousY2 - param1 + s.noise(inc) * signal;
-            let x2 = previousX2 + param + s.noise(inc) * signal;
+            let y1 = previousY2 - param1 + s.noise(inc);
+            let x2 = previousX2 + param + s.noise(inc);
             let y2 = yPosition + param1;
+
+            if (signal > 20) {
+                y1 = previousY2 - param1 + s.noise(inc) * signal;
+                x2 = previousX2 + param + s.noise(inc) * signal;
+            }
 
             if (!isNaN(previousX2) && !isNaN(previousY2)) {
                 s.line(x1, y1, x2, y2);
