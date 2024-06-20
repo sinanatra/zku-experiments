@@ -15,13 +15,17 @@
     const resolution = 1;
 
     onMount(async () => {
-        const response = await fetch("https://zku-middleware.vercel.app/api/weather");
+        const response = await fetch(
+            "https://zku-middleware.vercel.app/api/weather",
+        );
         data = await response.json();
         params = Object.keys(data[0]).filter(
             (key) => typeof data[0][key] === "number",
         );
 
-        const signalResponse = await fetch("https://zku-middleware.vercel.app/api/signal");
+        const signalResponse = await fetch(
+            "https://zku-middleware.vercel.app/api/signal",
+        );
         const signalData = await signalResponse.json();
         signals = signalData.map((d) => d.signal);
 
@@ -59,9 +63,11 @@
 
                 s.rotate(flowField[rowIdx][col].heading());
 
-                s.stroke(255);
-                s.line(x, y, signal, 0);
-                
+                if (signal > 15) {
+                    s.stroke(255);
+                    s.line(x, y + colWidth, signal, 0);
+                }
+
                 s.stroke("yellow");
                 s.line(0, 0, colWidth, 0);
 

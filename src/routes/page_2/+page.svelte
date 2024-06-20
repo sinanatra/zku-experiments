@@ -10,7 +10,7 @@
     let signalIdx = 0;
     let every = 1;
 
-    let point = 2;
+    let point = 1;
     let meta = "";
 
     let nr = 0;
@@ -96,6 +96,8 @@
             s.background(255);
             s.background(0);
             s.stroke(255);
+            // s.strokeWeight(0.8);
+            // s.pixelDensity(1);
         };
 
         s.draw = () => {

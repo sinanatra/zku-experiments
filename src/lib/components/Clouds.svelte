@@ -281,7 +281,7 @@
             <span>
                 {new Date(data[idx].time).toLocaleString()}
             </span>
-            <span>
+            <!-- <span>
                 Solar Radiation: {data[idx].solarradiation} /
             </span>
             <span>
@@ -292,7 +292,7 @@
             </span>
             <span>
                 cloud: {cloudDensity}
-            </span>
+            </span> -->
         </div>
     </div>
     <section bind:clientWidth={width} bind:clientHeight={height}>
@@ -324,7 +324,7 @@
     }
 
     .metadata {
-        width: 100vw;
+        /* width: 100vw; */
         background-color: black;
         color: white;
         position: fixed;
