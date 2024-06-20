@@ -280,7 +280,7 @@
         <span>
             {new Date(data[idx].time).toLocaleString()}
         </span>
-        <span>
+        <!-- <span>
             Solar Radiation: {data[idx].solarradiation} /
         </span>
         <span>
@@ -294,7 +294,7 @@
         </span>
         <span>
             winddir: {data[idx].winddir}
-        </span>
+        </span> -->
     </div>
     <section bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />

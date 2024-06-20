@@ -112,7 +112,7 @@
 {#if data.length === 0}
     <article>Loading...</article>
 {:else}
-    <div>{meta}</div>
+    <!-- <div>{meta}</div> -->
     <article bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
     </article>

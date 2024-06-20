@@ -1,6 +1,6 @@
 <header>
     <span>
-        <a href="/">Clouds</a>
+        <a href="/page_4">Clouds</a>
         ⎯
         <a href="/page_1">Seismograph</a>
         ⎯
@@ -8,7 +8,7 @@
         ⎯
         <a href="/page_3">Blocks</a>
         ⎯
-        <a href="/page_4">3D</a>
+        <a href="/page_5">3D</a>
     </span>
 </header>
 

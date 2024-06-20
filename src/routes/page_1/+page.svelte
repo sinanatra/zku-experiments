@@ -105,7 +105,7 @@
 {#if data.length === 0 && signals.length === 0}
     <article>Loading...</article>
 {:else}
-    <div>
+    <!-- <div>
         {meta}
         <label>
             <input
@@ -125,7 +125,7 @@
                 value="true"
             /> With interference
         </label>
-    </div>
+    </div> -->
     <article bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
     </article>

@@ -137,7 +137,7 @@
                     ? (signalIdx + every) % signals.length
                     : signalIdx + every;
 
-            meta = `${record.time}` || meta;
+            // meta = `${record.time}` || meta;
         };
     };
 
@@ -149,7 +149,7 @@
 {#if data.length == 0 && signals.length == 0}
     <article>Loading...</article>
 {:else}
-    <div>{meta}</div>
+    <!-- <div>{meta}</div> -->
     <article bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />
     </article>
