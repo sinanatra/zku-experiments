@@ -13,6 +13,7 @@
     let colWidth;
     let signalIdx = 1;
     const resolution = 1;
+    let color = 0;
 
     onMount(async () => {
         const response = await fetch(
@@ -52,6 +53,11 @@
             signalIdx = (signalIdx + resolution) % signals.length;
             let signal = s.map(signals[signalIdx], -100, -60, 1, 30) || 1;
 
+            let framecheck = s.frameCount % 60;
+            if (framecheck == 0) {
+                color = (color + 1) % 360;
+            }
+
             for (let col = 0; col < cols; col++) {
                 const x = col * colWidth;
                 const y = rowIdx * resolution;
@@ -68,7 +74,7 @@
                     s.line(x, y + colWidth, signal, 0);
                 }
 
-                s.stroke("yellow");
+                s.stroke(color, 100, 50);
                 s.line(0, 0, colWidth, 0);
 
                 s.pop();
