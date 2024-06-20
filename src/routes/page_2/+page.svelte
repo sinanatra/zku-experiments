@@ -140,7 +140,7 @@
                 yPosition = s.random(10, columnWidth);
                 previousX2 = NaN;
                 previousY2 = NaN;
-                s.background(255);
+                s.background(0);
                 getRandomParams();
             }
 
