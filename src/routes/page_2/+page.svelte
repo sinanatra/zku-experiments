@@ -96,18 +96,18 @@
             s.background(255);
             s.background(0);
             s.stroke(255);
+
             // s.strokeWeight(0.8);
             // s.pixelDensity(1);
         };
 
         s.draw = () => {
             if (!data.length || !signals.length) return;
-
             const record = data[idx];
 
             let param = s.map(record[params[nr]], 0, columnWidth, 10, 20) || 1;
             let param1 = s.map(record[params[nr]], 0, columnWidth, 10, 20) || 1;
-            let signal = s.map(signals[signalIdx], -90, -60, 10, 40) || 1;
+            let signal = s.map(signals[signalIdx], -90, -60, 20, 60) || 1;
 
             let x1 = xPosition + param;
             let y1 = previousY2 - param1 + s.noise(inc);

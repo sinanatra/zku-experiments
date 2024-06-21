@@ -78,6 +78,8 @@
                     );
 
                     if (interference && signals.length > 0) {
+                        s.fill(241, 90, 45, 0.5);
+                        s.rect(normalizedValue, yPosition, point, point);
                         s.fill("red");
                         s.rect(normalizedSignal, yPosition, point, point);
                         normalizedValue += normalizedSignal;

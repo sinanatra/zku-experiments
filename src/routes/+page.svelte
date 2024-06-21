@@ -72,8 +72,8 @@
     }
 
     .cube {
-        width: 80vw;
-        height: 80vw;
+        width: 90vw;
+        height: 90vw;
         position: relative;
         transform-style: preserve-3d;
         transform: rotateX(-20deg) rotateY(20deg);
@@ -95,22 +95,22 @@
     }
 
     .front {
-        transform: rotateY(0deg) translateZ(40vw);
+        transform: rotateY(0deg) translateZ(45vw);
     }
     .back {
-        transform: rotateY(180deg) translateZ(40vw);
+        transform: rotateY(180deg) translateZ(45vw);
     }
     .left {
-        transform: rotateY(-90deg) translateZ(40vw);
+        transform: rotateY(-90deg) translateZ(45vw);
     }
     .right {
-        transform: rotateY(90deg) translateZ(40vw);
+        transform: rotateY(90deg) translateZ(45vw);
     }
     .top {
-        transform: rotateX(90deg) translateZ(40vw);
+        transform: rotateX(90deg) translateZ(45vw);
     }
     .bottom {
-        transform: rotateX(-90deg) translateZ(40vw);
+        transform: rotateX(-90deg) translateZ(45vw);
     }
 
     @keyframes rotate {

@@ -23,7 +23,7 @@
             // setTimeout(updateIndex, 1000);
         }
         // idx =  Math.floor(Math.random() * data.length) + 1
-        setTimeout(updateIndex, 1000);
+        setTimeout(updateIndex, 10000);
     }
 </script>
 

@@ -8,7 +8,7 @@
         ⎯
         <a href="/page_3">Blocks</a>
         ⎯
-        <!-- <a href="/page_5">Clouds</a> -->
+        <a href="/page_6">Circles</a>
     </div>
 </header>
 
