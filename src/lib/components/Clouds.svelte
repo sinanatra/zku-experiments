@@ -223,23 +223,23 @@
         // uv = p * vec2(iResolution.x / iResolution.y, 1.0);
         // uv *= cloudscale * 0.1;
         // uv -= q - time * windVector;
-        // weight = 0.4; //0.4
-        // for (int i = 0; i < 2; i++) {
+        // weight = 0.8; //0.4
+        // for (int i = 0; i < 4; i++) {
         //     c += weight * noise(uv);
         //     uv = m * uv + time * windVector;
         //     weight *= 0.04;
         // }
         
-        // time = iTime * speed * 1.0;
-        // uv = p * vec2(iResolution.x / iResolution.y, 1.0);
-        // uv *= cloudscale * 0.1;
-        // uv -= q - time * windVector;
-        // weight = 0.4;
-        // for (int i = 0; i < 2; i++) {
-        //     c1 += abs(weight * noise(uv));
-        //     uv = m * uv + time * windVector;
-        //     weight *= 0.9;
-        // }
+        time = iTime * speed * 1.0;
+        uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        uv *= cloudscale * 0.1;
+        uv -= q - time * windVector;
+        weight = 0.8;
+        for (int i = 0; i < 4; i++) {
+            c1 += abs(weight * noise(uv));
+            uv = m * uv + time * windVector;
+            weight *= 0.09;
+        }
 
         //  check
 
