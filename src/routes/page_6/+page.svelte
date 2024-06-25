@@ -50,6 +50,8 @@
         };
 
         s.draw = () => {
+            const record = data[idx];
+
             s.background(0, 0.1);
             if (!data.length || !signals.length) return;
 
@@ -61,49 +63,101 @@
                 color = (color + 1) % 360;
             }
 
+            let test = [params[nr]];
+
             const rowIdx = s.frameCount % rows;
             idx = (idx + 1) % data.length;
 
-            for (let col = 0; col < cols; col++) {
-                for (let row = 0; row < rows; row++) {
-                    const x = col * colWidth;
-                    const y = row * rowHeight;
-                    const maxValue = maxValues[col];
-                    const param = params[col];
-                    const value = data[idx][param];
-                    let normalizedValue = s.map(value, 0, maxValue, 0, 1);
+            params.forEach((param, i) => {
+                let normalizedValue = s.map(
+                    record[test], //param
+                    0,
+                    maxValues[i],
+                    0,
+                    1,
+                );
+
+                let ellipseCount = Math.floor(normalizedValue * 10);
+                let endSize = s.map(signal, 1, 30, colWidth / 2, 0);
+
+                // let endOffset = s.map(signal, 1, 30, 0, (colWidth - endSize) / 2);
+                
+                s.push();
+                for (let i = 0; i < ellipseCount; i++) {
+                    s.noStroke();
+                    s.fill((i * 10) % 255);
+                    // s.stroke((i * 10) % 360, 100, 50);
+
+                    let diameter = s.map(i, 0, ellipseCount, colWidth, endSize);
+                    // let offset = s.map(i, 0, ellipseCount, 0, endOffset);
+                    let offset = s.map(
+                        i,
+                        0,
+                        ellipseCount,
+                        0,
+                        (colWidth - endSize) / 2,
+                    );
+
+                    // let vector = flowField[row][col];
 
                     s.push();
-                    s.translate(x + colWidth / 2, y + rowHeight / 2);
-
-                    let ellipseCount = Math.floor(normalizedValue * 10);
-                    let endSize = s.map(signal, 1, 30, colWidth / 2, 0);
-                    // let endOffset = s.map(signal, 1, 30, 0, (colWidth - endSize) / 2);
-               
-
-                    s.noFill();
-                    s.stroke(color, 100, 50);
-
-                    for (let i = 0; i < ellipseCount; i++) {
-                        s.noStroke();
-                        s.fill((i * 10) % 255);
-                        // s.stroke((i * 10) % 360, 100, 50);
-
-                        let diameter = s.map(i, 0, ellipseCount, colWidth, endSize);
-                        // let offset = s.map(i, 0, ellipseCount, 0, endOffset);
-                        let offset = s.map(i, 0, ellipseCount, 0, (colWidth - endSize) / 2);
-
-                        let vector = flowField[row][col];
-
-                        s.push();
-                        s.translate(offset * vector.x, offset * vector.y);
-                        s.ellipse(0, 0, diameter, diameter);
-                        s.pop();
-                    }
-
+                    // s.translate(offset * vector.x, offset * vector.y);
+                    s.ellipse(0, 0, diameter, diameter);
                     s.pop();
                 }
-            }
+
+            });
+
+            // for (let col = 0; col < cols; col++) {
+
+            //     for (let row = 0; row < rows; row++) {
+            //         const x = col * colWidth;
+            //         const y = row * rowHeight;
+            //         const maxValue = maxValues[col];
+            //         const param = params[col];
+            //         // const value = data[idx][param];
+            //         const value = data[idx][test];
+
+            //         let normalizedValue = s.map(value, 0, maxValue, 0, 1);
+
+            //         let normalizedValue = s.map(
+            //             record[test], //param
+            //             0,
+            //             maxValues[col],
+            //             0,
+            //             1,
+            //         );
+
+            //         s.push();
+            //         s.translate(x + colWidth / 2, y + rowHeight / 2);
+
+            //         let ellipseCount = Math.floor(normalizedValue * 10);
+            //         let endSize = s.map(signal, 1, 30, colWidth / 2, 0);
+            //         // let endOffset = s.map(signal, 1, 30, 0, (colWidth - endSize) / 2);
+
+            //         s.noFill();
+            //         s.stroke(color, 100, 50);
+
+            //         for (let i = 0; i < ellipseCount; i++) {
+            //             s.noStroke();
+            //             s.fill((i * 10) % 255);
+            //             // s.stroke((i * 10) % 360, 100, 50);
+
+            //             let diameter = s.map(i, 0, ellipseCount, colWidth, endSize);
+            //             // let offset = s.map(i, 0, ellipseCount, 0, endOffset);
+            //             let offset = s.map(i, 0, ellipseCount, 0, (colWidth - endSize) / 2);
+
+            //             let vector = flowField[row][col];
+
+            //             s.push();
+            //             s.translate(offset * vector.x, offset * vector.y);
+            //             s.ellipse(0, 0, diameter, diameter);
+            //             s.pop();
+            //         }
+
+            //         s.pop();
+            //     }
+            // }
             updateFlowField(s, rowIdx);
         };
 
