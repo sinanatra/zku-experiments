@@ -200,7 +200,7 @@
 </script>
 
 {#if data.length === 0}
-    <article>Loading...</article>
+    <article></article>
 {:else}
     <article bind:clientWidth={width} bind:clientHeight={height}>
         <P5 {sketch} />

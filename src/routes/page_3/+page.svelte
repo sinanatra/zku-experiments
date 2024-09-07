@@ -53,7 +53,7 @@
             signalIdx = (signalIdx + resolution) % signals.length;
             let signal = s.map(signals[signalIdx], -100, -60, 1, 30) || 1;
 
-            let framecheck = s.frameCount % 60;
+            let framecheck = s.frameCount % 10;
             if (framecheck == 0) {
                 color = (color + 1) % 360;
             }
@@ -122,7 +122,7 @@
 </script>
 
 {#if data.length === 0}
-    <article>Loading...</article>
+    <article></article>
 {:else}
     <!-- <div>{meta}</div> -->
     <article bind:clientWidth={width} bind:clientHeight={height}>

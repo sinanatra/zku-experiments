@@ -135,7 +135,7 @@
                 previousY2 = NaN;
             }
 
-            if (xPosition + columnWidth >= width || idx + 1 >= data.length) {
+            if (xPosition + columnWidth >= width) {
                 xPosition = columnWidth;
                 yPosition = s.random(10, columnWidth);
                 previousX2 = NaN;
@@ -160,7 +160,7 @@
 </script>
 
 {#if data.length == 0 && signals.length == 0}
-    <article>Loading...</article>
+    <article></article>
 {:else}
     <!-- <div>{meta}</div> -->
     <article bind:clientWidth={width} bind:clientHeight={height}>

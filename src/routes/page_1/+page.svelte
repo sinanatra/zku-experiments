@@ -40,7 +40,9 @@
 
         s.draw = () => {
             let yPosition = (idx * point) % height;
-            if (yPosition == 0) {
+            let framecheck = s.frameCount % 120;
+
+            if (yPosition == 0 || framecheck == 0) {
                 nr = Math.floor(Math.random() * params.length) % height;
             }
 
@@ -55,7 +57,6 @@
                 const sig = signals[idx];
                 let test = [params[nr]];
                 let normalizedSignal = s.map(sig, -70, -80, 10, 500);
-                let framecheck = s.frameCount % 120;
 
                 if (addLine) {
                     addLine = false;
@@ -80,8 +81,8 @@
                     if (interference && signals.length > 0) {
                         s.fill(241, 90, 45, 0.5);
                         s.rect(normalizedValue, yPosition, point, point);
-                        s.fill("red");
-                        s.rect(normalizedSignal, yPosition, point, point);
+                        // s.fill("red");
+                        // s.rect(normalizedSignal, yPosition, point, point);
                         normalizedValue += normalizedSignal;
                     }
 
@@ -107,7 +108,8 @@
 </script>
 
 {#if data.length === 0 && signals.length === 0}
-    <article>Loading...</article>
+    <article></article>
+    
 {:else}
     <!-- <div>
         {meta}

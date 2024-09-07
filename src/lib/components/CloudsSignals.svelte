@@ -285,7 +285,7 @@
 </script>
 
 {#if data[idx].length == 0}
-    <article>Loading...</article>
+    <article></article>
 {:else}
     <div class="metadata">
         <span>
