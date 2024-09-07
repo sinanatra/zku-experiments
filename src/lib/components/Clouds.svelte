@@ -18,7 +18,7 @@
 
         s.setup = () => {
             s.createCanvas(width, height, s.WEBGL);
-            // s.pixelDensity(1);
+            // s.pixelDensity();
             s.angleMode(s.DEGREES);
             myShader = s.createShader(vs, fs);
             s.shader(myShader);
@@ -219,27 +219,27 @@
         float c1 = 0.0;
 
         //  check
-        time = iTime * speed;
-        uv = p * vec2(iResolution.x / iResolution.y, 1.0);
-        uv *= cloudscale * 0.1;
-        uv -= q - time * windVector;
-        weight = 0.4; //0.4
-        for (int i = 0; i < 2; i++) {
-            c += weight * noise(uv);
-            uv = m * uv + time * windVector;
-            weight *= 0.04;
-        }
+        // time = iTime * speed;
+        // uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        // uv *= cloudscale * 0.1;
+        // uv -= q - time * windVector;
+        // weight = 0.4; //0.4
+        // for (int i = 0; i < 2; i++) {
+        //     c += weight * noise(uv);
+        //     uv = m * uv + time * windVector;
+        //     weight *= 0.04;
+        // }
         
-        time = iTime * speed;
-        uv = p * vec2(iResolution.x / iResolution.y, 1.0);
-        uv *= cloudscale * 0.1;
-        uv -= q - time * windVector;
-        weight = 0.4;
-        for (int i = 0; i < 2; i++) {
-            c1 += abs(weight * noise(uv));
-            uv = m * uv + time * windVector;
-            weight *= 0.09;
-        }
+        // time = iTime * speed;
+        // uv = p * vec2(iResolution.x / iResolution.y, 1.0);
+        // uv *= cloudscale * 0.1;
+        // uv -= q - time * windVector;
+        // weight = 0.4;
+        // for (int i = 0; i < 2; i++) {
+        //     c1 += abs(weight * noise(uv));
+        //     uv = m * uv + time * windVector;
+        //     weight *= 0.09;
+        // }
 
         //  check
 
@@ -274,7 +274,7 @@
 </script>
 
 {#if data[idx].length == 0}
-    <article>Loading...</article>
+    <article></article>
 {:else}
     <div class="metadata">
         <div>
